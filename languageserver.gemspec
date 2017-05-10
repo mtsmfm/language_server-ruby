@@ -6,12 +6,12 @@ require 'languageserver/version'
 Gem::Specification.new do |spec|
   spec.name          = "languageserver"
   spec.version       = Languageserver::VERSION
-  spec.authors       = ["TODO: Write your name"]
-  spec.email         = ["TODO: Write your email address"]
+  spec.authors       = ["Fumiaki MATSUSHIMA"]
+  spec.email         = ["mtsmfm@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{}
+  spec.description   = %q{}
+  spec.homepage      = "https://github.com/mtsmfm/languageserver-ruby"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

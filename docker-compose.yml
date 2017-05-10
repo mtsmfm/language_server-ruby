@@ -1,0 +1,9 @@
+version: '3.2'
+services:
+  app:
+    build: .
+    volumes:
+      - ./:/app
+      - home:/home/ruby
+volumes:
+  home:

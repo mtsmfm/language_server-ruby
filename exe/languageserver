@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+if Dir.exist?(File.join(__dir__, "..", ".git"))
+  $LOAD_PATH << File.join(__dir__, "..", "lib")
+end
+
+require "languageserver"
+Languageserver.run

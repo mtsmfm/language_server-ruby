@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+yarn run -s ts-node scripts/generateFiles.ts

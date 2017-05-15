@@ -5,5 +5,12 @@ services:
     volumes:
       - ./:/app
       - home:/home/ruby
+  node:
+    image: node:7.10-alpine
+    user: node
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - home:/home/node
 volumes:
   home:

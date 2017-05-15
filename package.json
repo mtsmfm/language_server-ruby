@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@types/es6-promise": "^0.0.32",
+    "@types/node": "^7.0.18",
+    "handlebars": "^4.0.8",
+    "isomorphic-fetch": "^2.2.1",
+    "ts-node": "^3.0.4",
+    "typescript": "^2.3.2"
+  }
+}

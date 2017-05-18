@@ -6,6 +6,8 @@ services:
       - ./:/app
       - home:/home/ruby
       - $HOME:/$HOME
+      - $HOME/.gitconfig:/home/ruby/.gitconfig:ro
+      - $HOME/.ssh:/home/ruby/.ssh:ro
   node:
     image: node:7.10-alpine
     user: node

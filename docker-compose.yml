@@ -5,6 +5,7 @@ services:
     volumes:
       - ./:/app
       - home:/home/ruby
+      - $HOME:/$HOME
   node:
     image: node:7.10-alpine
     user: node

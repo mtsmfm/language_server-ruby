@@ -1,7 +1,9 @@
 version: '3.2'
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.development
     volumes:
       - ./:/app
       - home:/home/ruby

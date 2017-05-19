@@ -14,8 +14,12 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/mtsmfm/language_server-ruby"
   spec.license       = "MIT"
 
-  spec.files         = `git ls-files -z`.split("\x0").reject do |f|
-    f.match(%r{^(test|spec|features)/})
+  spec.files         = begin
+    `git ls-files -z`.split("\x0").reject do |f|
+      f.match(%r{^(test|spec|features)/})
+    end
+  rescue
+    Dir.glob("**/*").reject {|path| File.directory?(path) }
   end
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }

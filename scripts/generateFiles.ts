@@ -139,8 +139,8 @@ Handlebars.registerHelper("const", s => {
   const modules = definitions.filter(d => d.module);
 
   interfaces.forEach(definition => {
-    createFile(path.join(rootDir, "lib", "languageserver", "protocol", "interfaces", `${snake(definition.interface.name)}.rb`), Handlebars.compile(`
-module Languageserver
+    createFile(path.join(rootDir, "lib", "language_server", "protocol", "interfaces", `${snake(definition.interface.name)}.rb`), Handlebars.compile(`
+module LanguageServer
   module Protocol
     module Interfaces
       {{#if definition.interface.documentation}}
@@ -184,8 +184,8 @@ end
   });
 
   modules.forEach(definition => {
-    createFile(path.join(rootDir, "lib", "languageserver", "protocol", "constants", `${snake(definition.module.name)}.rb`), Handlebars.compile(`
-module Languageserver
+    createFile(path.join(rootDir, "lib", "language_server", "protocol", "constants", `${snake(definition.module.name)}.rb`), Handlebars.compile(`
+module LanguageServer
   module Protocol
     module Constants
       {{#if definition.module.documentation}}
@@ -209,15 +209,15 @@ end
 `.slice(1), {noEscape: true})({definition}));
   });
 
-  createFile(path.join(rootDir, "lib", "languageserver", "protocol", "interfaces.rb"), Handlebars.compile(`
+  createFile(path.join(rootDir, "lib", "language_server", "protocol", "interfaces.rb"), Handlebars.compile(`
 {{#each interfaces}}
-require "languageserver/protocol/interfaces/{{snake interface.name}}"
+require "language_server/protocol/interfaces/{{snake interface.name}}"
 {{/each}}
 `.slice(1), {noEscape: true})({interfaces}));
 
-  createFile(path.join(rootDir, "lib", "languageserver", "protocol", "constants.rb"), Handlebars.compile(`
+  createFile(path.join(rootDir, "lib", "language_server", "protocol", "constants.rb"), Handlebars.compile(`
 {{#each modules}}
-require "languageserver/protocol/constants/{{snake module.name}}"
+require "language_server/protocol/constants/{{snake module.name}}"
 {{/each}}
 `.slice(1), {noEscape: true})({modules}));
 

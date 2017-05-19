@@ -10,4 +10,4 @@ ENV LANG=C.UTF-8 \
 
 USER ruby
 WORKDIR /app
-CMD ["bundle", "exec", "exe/languageserver"]
+CMD ["bundle", "exec", "exe/language_server"]

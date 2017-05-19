@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in languageserver.gemspec
+# Specify your gem's dependencies in language_server.gemspec
 gemspec

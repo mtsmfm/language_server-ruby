@@ -1,5 +1,5 @@
 FROM ruby:2.4.1-alpine
 
-RUN gem install languageserver
+RUN gem install language_server
 
-CMD ["languageserver"]
+CMD ["language_server"]

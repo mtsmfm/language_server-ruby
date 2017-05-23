@@ -1,0 +1,12 @@
+{
+    "version": "0.1.0",
+    "isShellCommand": true,
+    "tasks": [
+        {
+            "taskName": "test",
+            "command": "docker-compose",
+            "args": ["run", "--rm", "app", "ruby", "-I", "test"],
+            "showOutput": "always"
+        }
+    ]
+}

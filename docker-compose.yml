@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile.development
     volumes:
-      - ./:/app
+      - ./:/app:cached
       - home:/home/ruby
       - $HOME:/$HOME
       - $HOME/.gitconfig:/home/ruby/.gitconfig:ro

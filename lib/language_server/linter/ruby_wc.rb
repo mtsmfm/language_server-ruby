@@ -1,6 +1,4 @@
 require "open3"
-require "tempfile"
-require "shellwords"
 
 module LanguageServer
   module Linter
@@ -28,17 +26,10 @@ module LanguageServer
       end
 
       def call
-        Tempfile.create do |file|
-          file.write(@source)
-          file.flush
+        _, err, _ = Open3.capture3("ruby -wc", stdin_data: @source)
 
-          path = file.path.shellescape
-
-          _, err, _ = Open3.capture3("ruby -wc #{path}")
-
-          err.scan(/.+:(\d+):\s*(.+?)[,:]\s(.+)/).map do |line_num, type,  message|
-            Error.new(line_num: line_num.to_i, message: message, type: type)
-          end
+        err.scan(/.+:(\d+):\s*(.+?)[,:]\s(.+)/).map do |line_num, type,  message|
+          Error.new(line_num: line_num.to_i, message: message, type: type)
         end
       end
     end

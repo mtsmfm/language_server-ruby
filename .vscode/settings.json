@@ -1,0 +1,5 @@
+{
+    "ruby-lsc.commandWithArgs": [
+        "docker-compose", "run", "--rm", "app"
+    ]
+}

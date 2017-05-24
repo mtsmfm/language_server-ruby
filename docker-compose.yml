@@ -12,9 +12,9 @@ services:
       - $HOME/.ssh:/home/ruby/.ssh:ro
       - $HOME/.gem:/home/ruby/.gem
   node:
-    image: node:7.10-alpine
-    user: node
-    working_dir: /app
+    build:
+      context: .
+      dockerfile: Dockerfile-node.development
     volumes:
       - app-sync/:/app
       - home:/home/node

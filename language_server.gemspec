@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Fumiaki MATSUSHIMA"]
   spec.email         = ["mtsmfm@gmail.com"]
 
-  spec.summary       = %q{}
-  spec.description   = %q{}
+  spec.summary       = %q{A Ruby Language Server implementation}
+  spec.description   = %q{A Ruby Language Server implementation}
   spec.homepage      = "https://github.com/mtsmfm/language_server-ruby"
   spec.license       = "MIT"
 

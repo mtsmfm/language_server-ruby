@@ -1,10 +1,18 @@
 # LanguageServer
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/language_server`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+A Ruby Language Server implementation.
 
 ## Installation
+
+If you are using vscode, instal [ruby-lsc](https://marketplace.visualstudio.com/items?itemName=mtsmfm.ruby-lsc) extension.
+
+### Docker
+
+Simply you can pull from [docker hub](https://hub.docker.com/r/mtsmfm/language_server-ruby/)
+
+    $ docker pull mtsmfm/language_server-ruby
+
+### Ruby gem
 
 Add this line to your application's Gemfile:
 
@@ -22,13 +30,38 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Currently, language_server-ruby supports only stdio to communicate.
+
+### Docker
+
+    $ docker run mtsmfm/language_server-ruby
+
+### Ruby gem
+
+    $ language_server
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+### Requirements
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+#### docker, docker-compose
+
+https://docs.docker.com/engine/installation
+
+#### docker-sync
+
+https://github.com/EugenMayer/docker-sync/wiki/1.-Installation
+
+### Setup
+
+    $ git clone https://github.com/mtsmfm/language_server-ruby.git
+    $ cs language_server-ruby
+    $ docker-sync start
+    $ docker-compose run app bin/setup
+
+### Run test
+
+    $ docker-compose run app bundle exec rake test
 
 ## Contributing
 

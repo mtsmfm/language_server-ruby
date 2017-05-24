@@ -1,81 +1,13 @@
 require "language_server/version"
 require "language_server/protocol/interfaces"
 require "language_server/protocol/constants"
+require "language_server/protocol/stdio"
 require "language_server/linter/ruby_wc"
 
 require "json"
 require "logger"
 
 module LanguageServer
-  module Protocol
-    module Stdio
-      class Reader
-        def read(&block)
-          buffer = ""
-          header_parsed = false
-          content_length = nil
-
-          while char = STDIN.getc
-            buffer << char
-
-            unless header_parsed
-              if buffer[-4..-1] == "\r\n" * 2
-                content_length = buffer.match(/Content-Length: (\d+)/i)[1].to_i
-
-                header_parsed = true
-                buffer.clear
-              end
-            else
-              if buffer.bytesize == content_length
-                LanguageServer.logger.debug("Receive: #{buffer}")
-
-                request = JSON.parse(buffer, symbolize_names: true)
-
-                block.call(request)
-
-                header_parsed = false
-                buffer.clear
-              end
-            end
-          end
-        end
-      end
-
-      class Writer
-        def respond(id:, result:)
-          write(id: id, result: result)
-        end
-
-        def notify(method:, params: {})
-          write(method: method, params: params)
-        end
-
-        private
-
-        def write(response)
-          response_str = response.merge(
-            jsonrpc: "2.0"
-          ).to_json
-
-          headers = {
-            "Content-Length" => response_str.bytesize
-          }
-
-          headers.each do |k, v|
-            STDOUT.print "#{k}: #{v}\r\n"
-          end
-
-          STDOUT.print "\r\n"
-
-          STDOUT.print response_str
-          STDOUT.flush
-
-          LanguageServer.logger.debug("Response: #{response_str}")
-        end
-      end
-    end
-  end
-
   class << self
     def logger
       @logger ||= Logger.new(STDERR)

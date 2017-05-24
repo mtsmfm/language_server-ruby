@@ -1,6 +1,7 @@
 require "language_server/version"
 require "language_server/protocol/interfaces"
 require "language_server/protocol/constants"
+require "language_server/linter/ruby_wc"
 
 require "json"
 require "logger"
@@ -132,43 +133,27 @@ module LanguageServer
   end
 
   on :"textDocument/didChange" do |request, notifier|
-    uri = request[:params][:textDocument][:uri]
-    text = request[:params][:contentChanges][0][:text]
-
-    diagnostics = nil
-
-    Tempfile.create do |file|
-      file.write(text)
-      file.flush
-
-      out, err, status = Open3.capture3("ruby -wc #{file.path.shellescape}")
-      severity = status.success? ? Protocol::Constants::DiagnosticSeverity::WARNING : Protocol::Constants::DiagnosticSeverity::ERROR
-
-      diagnostics = err.lines.map do |line|
-        line_num, message = line.scan(/#{Regexp.escape(file.path)}:(\d+): (.*)\n/).flatten
-        line_num = line_num.to_i
-
-        Protocol::Interfaces::Diagnostic.new(
-          message: message,
-          severity: severity,
-          range: Protocol::Interfaces::Range.new(
-            start: Protocol::Interfaces::Position.new(
-              line: line_num.to_i - 1,
-              character: 0
-            ),
-            end: Protocol::Interfaces::Position.new(
-              line: line_num.to_i - 1,
-              character: 0
-            )
+    diagnostics = Linter::RubyWC.new(request[:params][:contentChanges][0][:text]).call.map do |error|
+      Protocol::Interfaces::Diagnostic.new(
+        message: error.message,
+        severity: error.warning? ? Protocol::Constants::DiagnosticSeverity::WARNING : Protocol::Constants::DiagnosticSeverity::ERROR,
+        range: Protocol::Interfaces::Range.new(
+          start: Protocol::Interfaces::Position.new(
+            line: error.line_num,
+            character: 0
+          ),
+          end: Protocol::Interfaces::Position.new(
+            line: error.line_num,
+            character: 0
           )
         )
-      end
+      )
     end
 
     notifier.call(
       method: :"textDocument/publishDiagnostics",
       params: Protocol::Interfaces::PublishDiagnosticsParams.new(
-        uri: uri,
+        uri: request[:params][:textDocument][:uri],
         diagnostics: diagnostics
       )
     )

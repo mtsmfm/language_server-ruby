@@ -5,9 +5,6 @@ require "language_server/linter/ruby_wc"
 
 require "json"
 require "logger"
-require "open3"
-require "tempfile"
-require "shellwords"
 
 module LanguageServer
   module Protocol

@@ -7,7 +7,6 @@ services:
     volumes:
       - app-sync:/app:nocopy
       - home:/home/ruby
-      - $HOME:/$HOME
       - $HOME/.gitconfig:/home/ruby/.gitconfig:ro
       - $HOME/.ssh:/home/ruby/.ssh:ro
       - $HOME/.gem:/home/ruby/.gem

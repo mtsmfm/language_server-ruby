@@ -29,7 +29,7 @@ module LanguageServer
         _, err, _ = Open3.capture3("ruby -wc", stdin_data: @source)
 
         err.scan(/.+:(\d+):\s*(.+?)[,:]\s(.+)/).map do |line_num, type,  message|
-          Error.new(line_num: line_num.to_i, message: message, type: type)
+          Error.new(line_num: line_num.to_i - 1, message: message, type: type)
         end
       end
     end

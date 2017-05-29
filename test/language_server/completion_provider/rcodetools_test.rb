@@ -8,11 +8,11 @@ module LanguageServer
       end
 
       def teardown
-        UriStore.clear
+        FileStore.clear
       end
 
       def test_array
-        UriStore[@uri] = <<~EOS
+        FileStore[@uri] = <<~EOS
           [].l
         EOS
 
@@ -28,7 +28,7 @@ module LanguageServer
       end
 
       def test_no_candidates
-        UriStore[@uri] = <<~EOS
+        FileStore[@uri] = <<~EOS
           [].not_exists
         EOS
 
@@ -38,7 +38,7 @@ module LanguageServer
       end
 
       def test_syntax_error
-        UriStore[@uri] = <<~EOS
+        FileStore[@uri] = <<~EOS
           class Foo
           [].l
         EOS
@@ -49,7 +49,7 @@ module LanguageServer
       end
 
       def test_runtime_error
-        UriStore[@uri] = <<~EOS
+        FileStore[@uri] = <<~EOS
           require "not_exists"
           [].l
         EOS

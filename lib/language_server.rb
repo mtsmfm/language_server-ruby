@@ -4,7 +4,7 @@ require "language_server/protocol/constants"
 require "language_server/protocol/stdio"
 require "language_server/linter/ruby_wc"
 require "language_server/completion_provider/rcodetools"
-require "language_server/uri_store"
+require "language_server/file_store"
 
 require "json"
 require "logger"
@@ -70,7 +70,7 @@ module LanguageServer
   on :"textDocument/didChange" do |request, notifier|
     uri = request[:params][:textDocument][:uri]
     text = request[:params][:contentChanges][0][:text]
-    UriStore[uri] = text
+    FileStore[uri] = text
 
     diagnostics = Linter::RubyWC.new(text).call.map do |error|
       Protocol::Interfaces::Diagnostic.new(

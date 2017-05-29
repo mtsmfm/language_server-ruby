@@ -1,4 +1,4 @@
-require "language_server/uri_store"
+require "language_server/file_store"
 
 require "rcodetools/completion"
 
@@ -45,7 +45,7 @@ module LanguageServer
       private
 
       def source
-        UriStore[@uri]
+        FileStore[@uri]
       end
     end
   end

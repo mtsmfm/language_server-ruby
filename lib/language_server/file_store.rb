@@ -1,5 +1,5 @@
 module LanguageServer
-  class UriStore
+  class FileStore
     class << self
       def []=(uri, content)
         store[uri] = content

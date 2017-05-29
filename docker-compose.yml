@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile.development
     volumes:
-      - app-sync:/app:nocopy
+      - mtsmfm-language-server-sync:/app:nocopy
       - home:/home/ruby
       - $HOME/.gitconfig:/home/ruby/.gitconfig:ro
       - $HOME/.ssh:/home/ruby/.ssh:ro
@@ -15,9 +15,9 @@ services:
       context: .
       dockerfile: Dockerfile-node.development
     volumes:
-      - app-sync/:/app
+      - mtsmfm-language-server-sync:/app:nocopy
       - home:/home/node
 volumes:
-  app-sync:
+  mtsmfm-language-server-sync:
     external: true
   home:

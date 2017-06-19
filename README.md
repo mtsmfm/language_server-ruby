@@ -4,7 +4,7 @@ A Ruby Language Server implementation.
 
 ## Installation
 
-If you are using vscode, instal [ruby-lsc](https://marketplace.visualstudio.com/items?itemName=mtsmfm.ruby-lsc) extension.
+If you are using vscode, install [ruby-lsc](https://marketplace.visualstudio.com/items?itemName=mtsmfm.ruby-lsc) extension.
 
 ### Docker
 

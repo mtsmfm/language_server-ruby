@@ -1,0 +1,18 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: tmaier/docker-compose
+    working_directory: /project
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          command: |
+            set -x
+            docker volume create mtsmfm-language-server-sync
+            docker create -v mtsmfm-language-server-sync:/app --name mtsmfm-language-server-sync busybox chown -R 1000:1000 /app
+            docker cp . mtsmfm-language-server-sync:/app
+            docker start mtsmfm-language-server-sync
+            docker-compose run app bin/setup
+            docker-compose run app bundle exec rake test

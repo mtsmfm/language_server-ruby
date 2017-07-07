@@ -28,10 +28,11 @@ module LanguageServer
     end
 
     class Rcodetools
-      def initialize(uri, line, character)
+      def initialize(uri:, line:, character:, file_store:)
         @uri = uri
         @line = line
         @character = character
+        @file_store = file_store
       end
 
       def call
@@ -45,7 +46,7 @@ module LanguageServer
       private
 
       def source
-        FileStore[@uri]
+        @file_store.read(@uri)
       end
     end
   end

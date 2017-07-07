@@ -47,6 +47,10 @@ module LanguageServer
     def on(method, &callback)
       subscribers[method] = callback
     end
+
+    def file_store
+      @file_store ||= FileStore.new
+    end
   end
 
   on :initialize do
@@ -70,7 +74,7 @@ module LanguageServer
   on :"textDocument/didChange" do |request, notifier|
     uri = request[:params][:textDocument][:uri]
     text = request[:params][:contentChanges][0][:text]
-    FileStore[uri] = text
+    LanguageServer.file_store.cache(uri, text)
 
     diagnostics = Linter::RubyWC.new(text).call.map do |error|
       Protocol::Interfaces::Diagnostic.new(
@@ -101,7 +105,7 @@ module LanguageServer
   on :"textDocument/completion" do |request|
     uri = request[:params][:textDocument][:uri]
     line, character = request[:params][:position].fetch_values(:line, :character)
-    CompletionProvider::Rcodetools.new(uri, line.to_i, character.to_i).call.map do |candidate|
+    CompletionProvider::Rcodetools.new(uri: uri, line: line.to_i, character: character.to_i, file_store: LanguageServer.file_store).call.map do |candidate|
       Protocol::Interfaces::CompletionItem.new(
         label: candidate.method_name,
         detail: candidate.description,

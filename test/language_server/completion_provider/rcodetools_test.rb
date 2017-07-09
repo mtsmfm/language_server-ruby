@@ -5,18 +5,15 @@ module LanguageServer
     class RcodetoolsTest < Minitest::Test
       def setup
         @uri = "file:///foo.rb"
-      end
-
-      def teardown
-        FileStore.clear
+        @file_store = FileStore.new
       end
 
       def test_array
-        FileStore[@uri] = <<~EOS
+        @file_store.cache(@uri, <<~EOS)
           [].l
         EOS
 
-        provider = Rcodetools.new(@uri, 0, 4)
+        provider = Rcodetools.new(uri: @uri, line: 0, character: 4, file_store: @file_store)
 
         candidates = [
           Candidate.new(method_name: "last",   description: "Array#last"),
@@ -28,33 +25,33 @@ module LanguageServer
       end
 
       def test_no_candidates
-        FileStore[@uri] = <<~EOS
+        @file_store.cache(@uri, <<~EOS)
           [].not_exists
         EOS
 
-        provider = Rcodetools.new(@uri, 0, 13)
+        provider = Rcodetools.new(uri: @uri, line: 0, character: 13, file_store: @file_store)
 
         assert { provider.call == [] }
       end
 
       def test_syntax_error
-        FileStore[@uri] = <<~EOS
+        @file_store.cache(@uri, <<~EOS)
           class Foo
           [].l
         EOS
 
-        provider = Rcodetools.new(@uri, 1, 4)
+        provider = Rcodetools.new(uri: @uri, line: 1, character: 4, file_store: @file_store)
 
         assert { provider.call == [] }
       end
 
       def test_runtime_error
-        FileStore[@uri] = <<~EOS
+        @file_store.cache(@uri, <<~EOS)
           require "not_exists"
           [].l
         EOS
 
-        provider = Rcodetools.new(@uri, 1, 4)
+        provider = Rcodetools.new(uri: @uri, line: 1, character: 4, file_store: @file_store)
 
         assert { provider.call == [] }
       end

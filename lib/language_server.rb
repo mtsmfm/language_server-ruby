@@ -18,6 +18,7 @@ module LanguageServer
     def run
       writer = Protocol::Stdio::Writer.new
       reader = Protocol::Stdio::Reader.new
+      file_store = FileStore.new
 
       reader.read do |request|
         method = request[:method].to_sym
@@ -29,7 +30,11 @@ module LanguageServer
         }
 
         if subscriber
-          result = subscriber.call(request, writer.method(:notify))
+          result = subscriber.call(
+            {
+              request: request, notifier: writer.method(:notify), file_store: file_store
+            }.select {|k, _| subscriber.parameters.map(&:last).include?(k) }
+          )
 
           if request[:id]
             writer.respond(id: request[:id], result: result)
@@ -46,10 +51,6 @@ module LanguageServer
 
     def on(method, &callback)
       subscribers[method] = callback
-    end
-
-    def file_store
-      @file_store ||= FileStore.new
     end
   end
 
@@ -71,10 +72,10 @@ module LanguageServer
     exit
   end
 
-  on :"textDocument/didChange" do |request, notifier|
+  on :"textDocument/didChange" do |request:, notifier:, file_store:|
     uri = request[:params][:textDocument][:uri]
     text = request[:params][:contentChanges][0][:text]
-    LanguageServer.file_store.cache(uri, text)
+    file_store.cache(uri, text)
 
     diagnostics = Linter::RubyWC.new(text).call.map do |error|
       Protocol::Interfaces::Diagnostic.new(
@@ -102,10 +103,10 @@ module LanguageServer
     )
   end
 
-  on :"textDocument/completion" do |request|
+  on :"textDocument/completion" do |request:, file_store:|
     uri = request[:params][:textDocument][:uri]
     line, character = request[:params][:position].fetch_values(:line, :character)
-    CompletionProvider::Rcodetools.new(uri: uri, line: line.to_i, character: character.to_i, file_store: LanguageServer.file_store).call.map do |candidate|
+    CompletionProvider::Rcodetools.new(uri: uri, line: line.to_i, character: character.to_i, file_store: file_store).call.map do |candidate|
       Protocol::Interfaces::CompletionItem.new(
         label: candidate.method_name,
         detail: candidate.description,

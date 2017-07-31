@@ -1,22 +1,11 @@
 require "language_server/file_store"
+require "language_server/protocol/interfaces/completion_item"
+require "language_server/protocol/constants/completion_item_kind"
 
 require "rcodetools/completion"
 
 module LanguageServer
   module CompletionProvider
-    class Candidate
-      attr_reader :method_name, :description
-
-      def initialize(method_name:, description:)
-        @method_name = method_name
-        @description = description
-      end
-
-      def ==(other)
-        method_name == other.method_name && description == other.description
-      end
-    end
-
     class Filter < ::Rcodetools::XMPCompletionFilter
       @candidates_with_description_flag = true
 
@@ -39,7 +28,11 @@ module LanguageServer
         _, candidates = Filter.run(source, lineno: @line + 1, column: @character)
         candidates.map do |candidate|
           method_name, description = candidate.split(/\0/, 2)
-          Candidate.new(method_name: method_name, description: description)
+          Protocol::Interfaces::CompletionItem.new(
+            label: method_name,
+            detail: description,
+            kind: Protocol::Constants::CompletionItemKind::METHOD
+          )
         end
       end
 

@@ -106,12 +106,9 @@ module LanguageServer
   on :"textDocument/completion" do |request:, file_store:|
     uri = request[:params][:textDocument][:uri]
     line, character = request[:params][:position].fetch_values(:line, :character)
-    CompletionProvider::Rcodetools.new(uri: uri, line: line.to_i, character: character.to_i, file_store: file_store).call.map do |candidate|
-      Protocol::Interfaces::CompletionItem.new(
-        label: candidate.method_name,
-        detail: candidate.description,
-        kind: Protocol::Constants::CompletionItemKind::METHOD
-      )
-    end
+
+    [
+      CompletionProvider::Rcodetools.new(uri: uri, line: line.to_i, character: character.to_i, file_store: file_store)
+    ].flat_map(&:call)
   end
 end

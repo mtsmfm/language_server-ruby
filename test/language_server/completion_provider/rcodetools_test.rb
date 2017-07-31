@@ -16,12 +16,12 @@ module LanguageServer
         provider = Rcodetools.new(uri: @uri, line: 0, character: 4, file_store: @file_store)
 
         candidates = [
-          Candidate.new(method_name: "last",   description: "Array#last"),
-          Candidate.new(method_name: "lazy",   description: "Enumerable#lazy"),
-          Candidate.new(method_name: "length", description: "Array#length")
+          Protocol::Interfaces::CompletionItem.new(label: "last",   kind: Protocol::Constants::CompletionItemKind::METHOD, detail: "Array#last"),
+          Protocol::Interfaces::CompletionItem.new(label: "lazy",   kind: Protocol::Constants::CompletionItemKind::METHOD, detail: "Enumerable#lazy"),
+          Protocol::Interfaces::CompletionItem.new(label: "length", kind: Protocol::Constants::CompletionItemKind::METHOD, detail: "Array#length")
         ]
 
-        assert { provider.call == candidates }
+        assert { provider.call.to_json == candidates.to_json }
       end
 
       def test_no_candidates

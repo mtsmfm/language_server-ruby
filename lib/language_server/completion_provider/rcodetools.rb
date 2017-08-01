@@ -1,4 +1,3 @@
-require "language_server/file_store"
 require "language_server/protocol/interfaces/completion_item"
 require "language_server/protocol/constants/completion_item_kind"
 

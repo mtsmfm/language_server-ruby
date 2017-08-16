@@ -16,4 +16,4 @@ jobs:
             docker start mtsmfm-language-server-sync
             docker-compose run node bin/generate_files
             docker-compose run app bin/setup
-            docker-compose run app bundle exec rake test
+            docker-compose run app bin/m

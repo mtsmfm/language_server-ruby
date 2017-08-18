@@ -5,4 +5,4 @@ syncs:
   mtsmfm-language-server-sync:
     src: .
     sync_userid: 1000
-    sync_excludes: ['vendor/bundle', 'node_modules', 'tmp']
+    sync_excludes: ['vendor', 'node_modules', 'tmp']

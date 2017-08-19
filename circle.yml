@@ -6,14 +6,26 @@ jobs:
     working_directory: /project
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 17.05.0-ce
       - run:
+          name: setup
           command: |
             set -x
+            docker info
             docker volume create mtsmfm-language-server-sync
             docker create -v mtsmfm-language-server-sync:/app --name mtsmfm-language-server-sync busybox chown -R 1000:1000 /app
             docker cp . mtsmfm-language-server-sync:/app
             docker start mtsmfm-language-server-sync
-            docker-compose run node bin/generate_files
+            docker-compose build
             docker-compose run app bin/setup
+            docker-compose run ruby-2-3 bin/setup
+            docker-compose run ruby-2-2 bin/setup
+      - run:
+          name: test
+          command: |
+            set -x
+            docker-compose run node bin/generate_files
             docker-compose run app bin/m
+            docker-compose run ruby-2-3 bin/m
+            docker-compose run ruby-2-2 bin/m

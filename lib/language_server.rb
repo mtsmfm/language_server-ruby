@@ -4,7 +4,9 @@ require "language_server/protocol/constants"
 require "language_server/protocol/stdio"
 require "language_server/linter/ruby_wc"
 require "language_server/completion_provider/rcodetools"
+require "language_server/completion_provider/ad_hoc"
 require "language_server/file_store"
+require "language_server/project"
 
 require "json"
 require "logger"
@@ -18,7 +20,7 @@ module LanguageServer
     def run
       writer = Protocol::Stdio::Writer.new
       reader = Protocol::Stdio::Reader.new
-      file_store = FileStore.new
+      variables = {}
 
       reader.read do |request|
         method = request[:method].to_sym
@@ -30,10 +32,11 @@ module LanguageServer
         }
 
         if subscriber
+          keys = subscriber.parameters.map(&:last)
           result = subscriber.call(
             {
-              request: request, notifier: writer.method(:notify), file_store: file_store
-            }.select {|k, _| subscriber.parameters.map(&:last).include?(k) }
+              request: request, notifier: writer.method(:notify), variables: variables
+            }.merge(variables).select {|k, _| keys.include?(k) }
           )
 
           if request[:id]
@@ -54,7 +57,10 @@ module LanguageServer
     end
   end
 
-  on :initialize do
+  on :initialize do |request:, variables:|
+    variables[:file_store] = FileStore.new(load_paths: $LOAD_PATH, remote_root: request[:params][:rootPath], local_root: Dir.getwd)
+    variables[:project] = Project.new(variables[:file_store])
+
     Protocol::Interfaces::InitializeResult.new(
       capabilities: Protocol::Interfaces::ServerCapabilities.new(
         text_document_sync: Protocol::Interfaces::TextDocumentSyncOptions.new(
@@ -72,10 +78,11 @@ module LanguageServer
     exit
   end
 
-  on :"textDocument/didChange" do |request:, notifier:, file_store:|
+  on :"textDocument/didChange" do |request:, notifier:, file_store:, project:|
     uri = request[:params][:textDocument][:uri]
     text = request[:params][:contentChanges][0][:text]
     file_store.cache(uri, text)
+    project.recalculate_result(uri)
 
     diagnostics = Linter::RubyWC.new(text).call.map do |error|
       Protocol::Interfaces::Diagnostic.new(
@@ -103,12 +110,13 @@ module LanguageServer
     )
   end
 
-  on :"textDocument/completion" do |request:, file_store:|
+  on :"textDocument/completion" do |request:, file_store:, project:|
     uri = request[:params][:textDocument][:uri]
-    line, character = request[:params][:position].fetch_values(:line, :character)
+    line, character = request[:params][:position].fetch_values(:line, :character).map(&:to_i)
 
     [
-      CompletionProvider::Rcodetools.new(uri: uri, line: line.to_i, character: character.to_i, file_store: file_store)
+      CompletionProvider::AdHoc.new(uri: uri, line: line, character: character, project: project),
+      CompletionProvider::Rcodetools.new(uri: uri, line: line, character: character, file_store: file_store)
     ].flat_map(&:call)
   end
 end

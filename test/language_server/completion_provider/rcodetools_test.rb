@@ -9,7 +9,7 @@ module LanguageServer
       end
 
       def test_array
-        @file_store.cache(@uri, <<~EOS)
+        @file_store.cache(@uri, <<-EOS.strip_heredoc)
           [].l
         EOS
 
@@ -25,7 +25,7 @@ module LanguageServer
       end
 
       def test_no_candidates
-        @file_store.cache(@uri, <<~EOS)
+        @file_store.cache(@uri, <<-EOS.strip_heredoc)
           [].not_exists
         EOS
 
@@ -35,7 +35,7 @@ module LanguageServer
       end
 
       def test_syntax_error
-        @file_store.cache(@uri, <<~EOS)
+        @file_store.cache(@uri, <<-EOS.strip_heredoc)
           class Foo
           [].l
         EOS
@@ -46,7 +46,7 @@ module LanguageServer
       end
 
       def test_runtime_error
-        @file_store.cache(@uri, <<~EOS)
+        @file_store.cache(@uri, <<-EOS.strip_heredoc)
           require "not_exists"
           [].l
         EOS

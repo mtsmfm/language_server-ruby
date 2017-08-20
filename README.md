@@ -61,7 +61,9 @@ https://github.com/EugenMayer/docker-sync/wiki/1.-Installation
 
 ### Run test
 
-    $ docker-compose run app bundle exec rake test
+    $ docker-compose run app bin/m
+    $ docker-compose run ruby-2-3 bin/m
+    $ docker-compose run ruby-2-2 bin/m
 
 ## Contributing
 

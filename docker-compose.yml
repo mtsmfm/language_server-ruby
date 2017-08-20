@@ -1,7 +1,7 @@
 version: '3.0'
 services:
-  app:
-    build:
+  app: &app
+    build: &app-build
       context: .
       dockerfile: Dockerfile.development
     volumes:
@@ -10,6 +10,18 @@ services:
       - $HOME/.gitconfig:/home/ruby/.gitconfig:ro
       - $HOME/.ssh:/home/ruby/.ssh:ro
       - $HOME/.gem:/home/ruby/.gem
+  ruby-2-3:
+    <<: *app
+    build:
+      <<: *app-build
+      args:
+        RUBY_VERSION: 2.3
+  ruby-2-2:
+    <<: *app
+    build:
+      <<: *app-build
+      args:
+        RUBY_VERSION: 2.2
   node:
     build:
       context: .

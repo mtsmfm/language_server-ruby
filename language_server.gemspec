@@ -33,4 +33,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry-byebug"
   spec.add_development_dependency "minitest-power_assert"
   spec.add_development_dependency "m"
+  spec.add_development_dependency "awesome_print"
 end

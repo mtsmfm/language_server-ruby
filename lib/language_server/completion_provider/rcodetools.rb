@@ -38,7 +38,7 @@ module LanguageServer
       private
 
       def source
-        @file_store.read(@uri)
+        @file_store.read_remote_uri(@uri)
       end
     end
   end

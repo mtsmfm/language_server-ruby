@@ -21,7 +21,7 @@ end
         end
       end
 
-      attributes :lineno, :path
+      attributes :lineno, :character, :path
 
       def remote_path; path.remote_path; end
       def local_path;  path.local_path;  end

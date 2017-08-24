@@ -32,6 +32,8 @@ module LanguageServer
 
       private
 
+      alias character column
+
       attr_reader :path
 
       def lineno
@@ -40,13 +42,13 @@ module LanguageServer
       end
 
       def on_const(name)
-        Constant.new(namespaces: [], name: name, value: nil, lineno: lineno, path: path).tap do |c|
+        build_node(Constant, namespaces: [], name: name, value: nil).tap do |c|
           @current_constants.push(c)
         end
       end
 
       def on_int(value)
-        LiteralValue.new(value: value.to_i, lineno: lineno, path: path)
+        build_node(LiteralValue, value: value.to_i)
       end
 
       def on_stmts_add(*args)
@@ -62,7 +64,7 @@ module LanguageServer
 
       def on_module(constant, children)
         cn = children.select {|child| child.instance_of?(Constant) || child.instance_of?(Module) || child.instance_of?(Class)}
-        Module.new(constant: constant, lineno: lineno, path: path, children: cn).tap do |m|
+        build_node(Module, constant: constant, children: cn).tap do |m|
           result.modules << m
           cn.each {|child| child.unshift_namespace(m) }
         end
@@ -70,10 +72,14 @@ module LanguageServer
 
       def on_class(constant, superclass, children)
         cn = children.select {|child| child.instance_of?(Constant) || child.instance_of?(Module) || child.instance_of?(Class)}
-        Class.new(constant: constant, superclass: superclass, lineno: lineno, path: path, children: cn).tap do |c|
+        build_node(Class, constant: constant, superclass: superclass, children: cn).tap do |c|
           result.classes << c
           cn.each {|child| child.unshift_namespace(c) }
         end
+      end
+
+      def build_node(klass, **args)
+        klass.new({lineno: lineno, character: character, path: path}.merge(args))
       end
     end
   end

@@ -27,7 +27,6 @@ module LanguageServer
 
         @path = path
         @result = Result.new
-        @current_constants = []
       end
 
       private
@@ -42,9 +41,7 @@ module LanguageServer
       end
 
       def on_const(name)
-        build_node(Constant, namespaces: [], name: name, value: nil).tap do |c|
-          @current_constants.push(c)
-        end
+        build_node(Constant, namespaces: [], name: name, value: nil)
       end
 
       def on_int(value)

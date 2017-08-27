@@ -4,6 +4,8 @@ services:
     build: &app-build
       context: .
       dockerfile: Dockerfile.development
+    environment:
+      LANGUAGE_SERVER_RUBY_REMOTE_ROOT: $PWD
     volumes:
       - mtsmfm-language-server-sync:/app:nocopy
       - home:/home/ruby

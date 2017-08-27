@@ -5,12 +5,13 @@ module LanguageServer
   class Project
     class Parser < Ripper
       class Result
-        attr_reader :constants, :classes, :modules
+        attr_reader :constants, :classes, :modules, :refs
 
         def initialize
           @constants = []
           @classes = []
           @modules = []
+          @refs = []
         end
       end
 
@@ -40,8 +41,32 @@ module LanguageServer
         super - 1
       end
 
+      def on_var_ref(node)
+        if node.instance_of?(Constant)
+          build_node(VarRef, node: node).tap do |n|
+            result.refs << n
+          end
+        else
+          node
+        end
+      end
+
+      def on_const_path_ref(*nodes)
+        if nodes.all? {|n| [Constant, ConstPathRef, VarRef].include?(n.class) }
+          build_node(ConstPathRef, nodes: nodes).tap do |n|
+            result.refs << n
+          end
+        else
+          nodes
+        end
+      end
+
       def on_const(name)
         build_node(Constant, namespaces: [], name: name, value: nil)
+      end
+
+      def on_def(*args)
+        args.flatten.compact
       end
 
       def on_int(value)
@@ -60,7 +85,8 @@ module LanguageServer
       end
 
       def on_module(constant, children)
-        cn = children.select {|child| child.instance_of?(Constant) || child.instance_of?(Module) || child.instance_of?(Class)}
+        cn = children.select {|child| child.respond_to?(:unshift_namespace) }
+
         build_node(Module, constant: constant, children: cn).tap do |m|
           result.modules << m
           cn.each {|child| child.unshift_namespace(m) }
@@ -68,7 +94,8 @@ module LanguageServer
       end
 
       def on_class(constant, superclass, children)
-        cn = children.select {|child| child.instance_of?(Constant) || child.instance_of?(Module) || child.instance_of?(Class)}
+        cn = children.select {|child| child.respond_to?(:unshift_namespace) }
+
         build_node(Class, constant: constant, superclass: superclass, children: cn).tap do |c|
           result.classes << c
           cn.each {|child| child.unshift_namespace(c) }

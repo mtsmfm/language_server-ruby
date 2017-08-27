@@ -9,9 +9,19 @@ module LanguageServer
       fetch_result
     end
 
+    def find_definitions(uri:, line:, character:)
+      result = result_store[file_store.path_from_remote_uri(uri)]
+
+      ref = result.refs.select {|node| node.lines.include?(line) && node.characters.include?(character) }.min_by {|node| node.characters.size }
+
+      return [] unless ref
+
+      lazy_modules.select {|n| n.full_name == ref.full_name }.force + lazy_classes.select {|n| n.full_name == ref.full_name }.force
+    end
+
     def recalculate_result(uri)
       path = file_store.path_from_remote_uri(uri)
-      result_store[path] = calculate(file_store.read(path), path)
+      calculate(file_store.read(path), path)
     end
 
     def constants(uri: nil, line: nil, character: nil)
@@ -50,7 +60,7 @@ module LanguageServer
 
     def fetch_result
       file_store.each {|content, path|
-        result_store[path] = calculate(content, path)
+        calculate(content, path)
       }
     end
 
@@ -61,7 +71,14 @@ module LanguageServer
     end
 
     def calculate(content, path)
-      Parser.parse(content, path)
+      begin
+        result = Parser.parse(content, path)
+      rescue => e
+        LanguageServer.logger.warn("Parse failed (local: #{path.local_path}, remote: #{path.remote_path})")
+        LanguageServer.logger.warn(e)
+      end
+
+      result_store[path] = result if result
     end
   end
 end

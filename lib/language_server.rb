@@ -1,4 +1,5 @@
 require "language_server/version"
+require "language_server/logger"
 require "language_server/protocol/interfaces"
 require "language_server/protocol/constants"
 require "language_server/protocol/stdio"
@@ -9,14 +10,9 @@ require "language_server/file_store"
 require "language_server/project"
 
 require "json"
-require "logger"
 
 module LanguageServer
   class << self
-    def logger
-      @logger ||= Logger.new(STDERR)
-    end
-
     def run
       writer = Protocol::Stdio::Writer.new
       reader = Protocol::Stdio::Reader.new

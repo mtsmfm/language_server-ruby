@@ -92,5 +92,69 @@ end
         "<Class #{full_name}#L#{lines.begin}-#{lines.end}>"
       end
     end
+
+    class VarRef < Node
+      attributes :node
+
+      def lines
+        node.lineno..node.lineno
+      end
+
+      def characters
+        node.character..(character - 1)
+      end
+
+      def unshift_namespace(class_or_module)
+        node.unshift_namespace(class_or_module) if node.respond_to?(:unshift_namespace)
+      end
+
+      def names
+        node.names
+      end
+
+      def name
+        node.name
+      end
+
+      def full_name
+        names.join('::')
+      end
+
+      def inspect
+        "<VarRef #{full_name}#L#{lineno}(#{characters})>"
+      end
+    end
+
+    class ConstPathRef < Node
+      attributes :nodes
+
+      def lines
+        (nodes.first.lineno)..(nodes.last.lineno)
+      end
+
+      def characters
+        (nodes.first.characters.begin)..(nodes.last.character)
+      end
+
+      def unshift_namespace(class_or_module)
+        nodes.first.unshift_namespace(class_or_module)
+      end
+
+      def name
+        nodes.last.name
+      end
+
+      def names
+        nodes.flat_map(&:names)
+      end
+
+      def full_name
+        names.join('::')
+      end
+
+      def inspect
+        "<ConstPathRef #{full_name}#L#{lineno}(#{characters})>"
+      end
+    end
   end
 end

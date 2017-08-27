@@ -6,6 +6,12 @@ require "language_server"
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
 
+def project
+  @project ||= LanguageServer::Project.new(
+    LanguageServer::FileStore.new(load_paths: $LOAD_PATH, remote_root: ENV['LANGUAGE_SERVER_RUBY_REMOTE_ROOT'], local_root: Dir.getwd)
+  )
+end
+
 # (If you use this, don't forget to add pry to your Gemfile!)
 require "pry-byebug"
 Pry.start

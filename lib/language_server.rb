@@ -4,7 +4,9 @@ require "language_server/protocol/constants"
 require "language_server/protocol/stdio"
 require "language_server/linter/ruby_wc"
 require "language_server/completion_provider/rcodetools"
+require "language_server/completion_provider/ad_hoc"
 require "language_server/file_store"
+require "language_server/project"
 
 require "json"
 require "logger"
@@ -18,7 +20,7 @@ module LanguageServer
     def run
       writer = Protocol::Stdio::Writer.new
       reader = Protocol::Stdio::Reader.new
-      file_store = FileStore.new
+      file_store = FileStore.new([Dir.getwd])
 
       reader.read do |request|
         method = request[:method].to_sym
@@ -106,12 +108,18 @@ module LanguageServer
   on :"textDocument/completion" do |request:, file_store:|
     uri = request[:params][:textDocument][:uri]
     line, character = request[:params][:position].fetch_values(:line, :character)
-    CompletionProvider::Rcodetools.new(uri: uri, line: line.to_i, character: character.to_i, file_store: file_store).call.map do |candidate|
+    completion_provider_params = {uri: uri, line: line.to_i, character: character.to_i, file_store: file_store}
+    CompletionProvider::Rcodetools.new(completion_provider_params).call.map {|candidate|
       Protocol::Interfaces::CompletionItem.new(
         label: candidate.method_name,
         detail: candidate.description,
         kind: Protocol::Constants::CompletionItemKind::METHOD
       )
-    end
+    } + CompletionProvider::AdHoc.new(completion_provider_params).call.map {|constant|
+      Protocol::Interfaces::CompletionItem.new(
+        label: constant.name,
+        kind: Protocol::Constants::CompletionItemKind::CLASS
+      )
+    }
   end
 end

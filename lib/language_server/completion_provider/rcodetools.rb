@@ -3,6 +3,8 @@ require "language_server/completion_provider/candidate"
 
 require "rcodetools/completion"
 
+Encoding.default_external = 'UTF-8'
+
 module LanguageServer
   module CompletionProvider
     class Filter < ::Rcodetools::XMPCompletionFilter

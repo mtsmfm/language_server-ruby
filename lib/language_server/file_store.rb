@@ -24,7 +24,11 @@ module LanguageServer
 
     def each(&block)
       all_file_paths.each do |path|
-        block.call(read(path))
+        begin
+          block.call(read(path))
+        rescue => e
+          binding.pry
+        end
       end
     end
 
@@ -38,6 +42,8 @@ module LanguageServer
 
     def to_path(uri_or_path)
       URI(uri_or_path).path
+    rescue URI::InvalidURIError
+      uri_or_path
     end
 
     def exists_on_cache?(path)

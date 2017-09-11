@@ -1,6 +1,4 @@
-require "language_server/protocol/interfaces/completion_item"
-require "language_server/protocol/constants/completion_item_kind"
-
+require "language_server/protocol"
 require "rcodetools/completion"
 
 module LanguageServer
@@ -27,10 +25,10 @@ module LanguageServer
         _, candidates = Filter.run(source, lineno: @line + 1, column: @character)
         candidates.map do |candidate|
           method_name, description = candidate.split(/\0/, 2)
-          Protocol::Interfaces::CompletionItem.new(
+          Protocol::Interface::CompletionItem.new(
             label: method_name,
             detail: description,
-            kind: Protocol::Constants::CompletionItemKind::METHOD
+            kind: Protocol::Constant::CompletionItemKind::METHOD
           )
         end
       end

@@ -1,8 +1,6 @@
 require "language_server/version"
 require "language_server/logger"
-require "language_server/protocol/interfaces"
-require "language_server/protocol/constants"
-require "language_server/protocol/stdio"
+require "language_server/protocol"
 require "language_server/linter/ruby_wc"
 require "language_server/completion_provider/rcodetools"
 require "language_server/completion_provider/ad_hoc"
@@ -15,14 +13,28 @@ require "json"
 module LanguageServer
   class << self
     def run
-      writer = Protocol::Stdio::Writer.new
-      reader = Protocol::Stdio::Reader.new
+      writer = Protocol::Transport::Stdio::Writer.new
+      reader = Protocol::Transport::Stdio::Reader.new
       variables = {}
 
-      reader.read do |request|
-        method = request[:method].to_sym
+      class << writer
+        def respond(id:, result:)
+          write(id: id, result: result)
 
-        logger.debug("Method: #{method} called")
+          LanguageServer.logger.debug("Respond: id: #{id}, result: #{JSON.pretty_generate(result)}")
+        end
+
+        def notify(method:, params: {})
+          write(method: method, params: params)
+
+          LanguageServer.logger.debug("Notify: method: #{method}, params: #{JSON.pretty_generate(params)}")
+        end
+      end
+
+      reader.read do |request|
+        logger.debug("Receive: #{JSON.pretty_generate(request)}")
+
+        method = request[:method].to_sym
 
         _, subscriber = subscribers.find {|k, _|
           k === method
@@ -58,12 +70,12 @@ module LanguageServer
     variables[:file_store] = FileStore.new(load_paths: $LOAD_PATH, remote_root: request[:params][:rootPath], local_root: Dir.getwd)
     variables[:project] = Project.new(variables[:file_store])
 
-    Protocol::Interfaces::InitializeResult.new(
-      capabilities: Protocol::Interfaces::ServerCapabilities.new(
-        text_document_sync: Protocol::Interfaces::TextDocumentSyncOptions.new(
-          change: Protocol::Constants::TextDocumentSyncKind::FULL
+    Protocol::Interface::InitializeResult.new(
+      capabilities: Protocol::Interface::ServerCapabilities.new(
+        text_document_sync: Protocol::Interface::TextDocumentSyncOptions.new(
+          change: Protocol::Constant::TextDocumentSyncKind::FULL
         ),
-        completion_provider: Protocol::Interfaces::CompletionOptions.new(
+        completion_provider: Protocol::Interface::CompletionOptions.new(
           resolve_provider: true,
           trigger_characters: %w(.)
         ),
@@ -83,15 +95,15 @@ module LanguageServer
     project.recalculate_result(uri)
 
     diagnostics = Linter::RubyWC.new(text).call.map do |error|
-      Protocol::Interfaces::Diagnostic.new(
+      Protocol::Interface::Diagnostic.new(
         message: error.message,
-        severity: error.warning? ? Protocol::Constants::DiagnosticSeverity::WARNING : Protocol::Constants::DiagnosticSeverity::ERROR,
-        range: Protocol::Interfaces::Range.new(
-          start: Protocol::Interfaces::Position.new(
+        severity: error.warning? ? Protocol::Constant::DiagnosticSeverity::WARNING : Protocol::Constant::DiagnosticSeverity::ERROR,
+        range: Protocol::Interface::Range.new(
+          start: Protocol::Interface::Position.new(
             line: error.line_num,
             character: 0
           ),
-          end: Protocol::Interfaces::Position.new(
+          end: Protocol::Interface::Position.new(
             line: error.line_num,
             character: 0
           )
@@ -101,7 +113,7 @@ module LanguageServer
 
     notifier.call(
       method: :"textDocument/publishDiagnostics",
-      params: Protocol::Interfaces::PublishDiagnosticsParams.new(
+      params: Protocol::Interface::PublishDiagnosticsParams.new(
         uri: uri,
         diagnostics: diagnostics
       )

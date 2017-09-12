@@ -10,14 +10,14 @@ module LanguageServer
 
       def call
         project.find_definitions(uri: uri, line: line, character: character).map do |n|
-          Protocol::Interfaces::Location.new(
+          Protocol::Interface::Location.new(
             uri: "file://#{n.remote_path}",
-            range: Protocol::Interfaces::Range.new(
-              start: Protocol::Interfaces::Position.new(
+            range: Protocol::Interface::Range.new(
+              start: Protocol::Interface::Position.new(
                 line: n.lines.begin,
                 character: 0
               ),
-              end: Protocol::Interfaces::Position.new(
+              end: Protocol::Interface::Position.new(
                 line: n.lines.end,
                 character: 0
               )

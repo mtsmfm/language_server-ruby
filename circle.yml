@@ -25,7 +25,6 @@ jobs:
           name: test
           command: |
             set -x
-            docker-compose run node bin/generate_files
             docker-compose run app bin/m
             docker-compose run ruby-2-3 bin/m
             docker-compose run ruby-2-2 bin/m

@@ -24,13 +24,6 @@ services:
       <<: *app-build
       args:
         RUBY_VERSION: 2.2
-  node:
-    build:
-      context: .
-      dockerfile: Dockerfile-node.development
-    volumes:
-      - mtsmfm-language-server-sync:/app:nocopy
-      - home:/home/node
 volumes:
   mtsmfm-language-server-sync:
     external: true

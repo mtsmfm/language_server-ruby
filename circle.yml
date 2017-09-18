@@ -1,9 +1,10 @@
 version: 2
 jobs:
-  build:
+  test-2-4: &test
     docker:
       - image: tmaier/docker-compose
-    working_directory: /project
+        environment:
+          SERVICE_NAME: ruby-2-4
     steps:
       - checkout
       - setup_remote_docker:
@@ -12,19 +13,28 @@ jobs:
           name: setup
           command: |
             set -x
-            docker info
             docker volume create mtsmfm-language-server-sync
             docker create -v mtsmfm-language-server-sync:/app --name mtsmfm-language-server-sync busybox chown -R 1000:1000 /app
             docker cp . mtsmfm-language-server-sync:/app
             docker start mtsmfm-language-server-sync
-            docker-compose build
-            docker-compose run app bin/setup
-            docker-compose run ruby-2-3 bin/setup
-            docker-compose run ruby-2-2 bin/setup
-      - run:
-          name: test
-          command: |
-            set -x
-            docker-compose run app bin/m
-            docker-compose run ruby-2-3 bin/m
-            docker-compose run ruby-2-2 bin/m
+      - run: docker-compose run $SERVICE_NAME bin/setup
+      - run: docker-compose run $SERVICE_NAME bin/m
+  test-2-3:
+    <<: *test
+    docker:
+      - image: tmaier/docker-compose
+        environment:
+          SERVICE_NAME: ruby-2-3
+  test-2-2:
+    <<: *test
+    docker:
+      - image: tmaier/docker-compose
+        environment:
+          SERVICE_NAME: ruby-2-2
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test-2-4
+      - test-2-3
+      - test-2-2

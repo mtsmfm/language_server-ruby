@@ -2,6 +2,7 @@ require "language_server/version"
 require "language_server/logger"
 require "language_server/protocol"
 require "language_server/linter/ruby_wc"
+require "language_server/linter/did_you_mean"
 require "language_server/completion_provider/rcodetools"
 require "language_server/completion_provider/ad_hoc"
 require "language_server/definition_provider/ad_hoc"
@@ -94,7 +95,10 @@ module LanguageServer
     file_store.cache(uri, text)
     project.recalculate_result(uri)
 
-    diagnostics = Linter::RubyWC.new(text).call.map do |error|
+    diagnostics = [
+      Linter::RubyWC.new(text).call,
+      Linter::DidYouMean.new(text).call
+    ].flatten.map do |error|
       Protocol::Interface::Diagnostic.new(
         message: error.message,
         severity: error.warning? ? Protocol::Constant::DiagnosticSeverity::WARNING : Protocol::Constant::DiagnosticSeverity::ERROR,

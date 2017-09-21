@@ -38,7 +38,7 @@ Currently, language_server-ruby supports only stdio to communicate.
 
 ### Ruby gem
 
-    $ language_server
+    $ language_server-ruby
 
 ## Development
 

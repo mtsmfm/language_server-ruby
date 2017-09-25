@@ -10,4 +10,4 @@ RUN bundle install --without development
 COPY lib /app/lib/
 COPY exe /app/exe/
 
-CMD ["bin/language_server-ruby"]
+CMD ["bundle", "exec", "exe/language_server-ruby"]

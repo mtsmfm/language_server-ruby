@@ -1,9 +1,0 @@
-version: '2'
-options:
-  verbose: true
-syncs:
-  mtsmfm-language-server-sync:
-    src: .
-    sync_userid: 1000
-    image: mtsmfm/unison
-    sync_excludes: ['vendor', 'node_modules', 'tmp']

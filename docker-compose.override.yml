@@ -1,0 +1,14 @@
+version: '3.0'
+services:
+  app: &app
+    volumes:
+      - .:/app:cached
+      - $HOME/.gitconfig:/home/ruby/.gitconfig:ro
+      - $HOME/.ssh:/home/ruby/.ssh:ro
+      - $HOME/.gem:/home/ruby/.gem
+  ruby-2-4:
+    <<: *app
+  ruby-2-3:
+    <<: *app
+  ruby-2-2:
+    <<: *app

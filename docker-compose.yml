@@ -4,14 +4,13 @@ services:
     build: &app-build
       context: .
       dockerfile: Dockerfile.development
+      args:
+        RUBY_VERSION: 2.4.2
     environment:
       LANGUAGE_SERVER_RUBY_REMOTE_ROOT: $PWD
     volumes:
-      - mtsmfm-language-server-sync:/app:nocopy
+      - vendor:/vendor
       - home:/home/ruby
-      - $HOME/.gitconfig:/home/ruby/.gitconfig:ro
-      - $HOME/.ssh:/home/ruby/.ssh:ro
-      - $HOME/.gem:/home/ruby/.gem
   ruby-2-4:
     <<: *app
   ruby-2-3:
@@ -27,6 +26,5 @@ services:
       args:
         RUBY_VERSION: 2.2.7
 volumes:
-  mtsmfm-language-server-sync:
-    external: true
   home:
+  vendor:

@@ -4,6 +4,7 @@ jobs:
     docker:
       - image: tmaier/docker-compose
         environment:
+          COMPOSE_FILE: docker-compose.yml:docker-compose.ci.yml
           SERVICE_NAME: ruby-2-4
     steps:
       - checkout
@@ -13,10 +14,12 @@ jobs:
           name: setup
           command: |
             set -x
-            docker volume create mtsmfm-language-server-sync
-            docker create -v mtsmfm-language-server-sync:/app --name mtsmfm-language-server-sync busybox chown -R 1000:1000 /app
-            docker cp . mtsmfm-language-server-sync:/app
-            docker start mtsmfm-language-server-sync
+            docker info
+            docker volume create project
+            docker create -v project:/app --name project busybox chown -R 1000:1000 /app
+            docker cp . project:/app
+            docker start project
+            docker-compose build $SERVICE_NAME
       - run: docker-compose run $SERVICE_NAME bin/setup
       - run: docker-compose run $SERVICE_NAME bin/m
   test-2-3:
@@ -24,12 +27,14 @@ jobs:
     docker:
       - image: tmaier/docker-compose
         environment:
+          COMPOSE_FILE: docker-compose.yml:docker-compose.ci.yml
           SERVICE_NAME: ruby-2-3
   test-2-2:
     <<: *test
     docker:
       - image: tmaier/docker-compose
         environment:
+          COMPOSE_FILE: docker-compose.yml:docker-compose.ci.yml
           SERVICE_NAME: ruby-2-2
 workflows:
   version: 2

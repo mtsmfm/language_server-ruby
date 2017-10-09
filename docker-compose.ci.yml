@@ -1,0 +1,14 @@
+version: '3.0'
+services:
+  app: &app
+    volumes:
+      - project:/app
+  ruby-2-4:
+    <<: *app
+  ruby-2-3:
+    <<: *app
+  ruby-2-2:
+    <<: *app
+volumes:
+  project:
+    external: true

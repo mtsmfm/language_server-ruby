@@ -48,15 +48,10 @@ Currently, language_server-ruby supports only stdio to communicate.
 
 https://docs.docker.com/engine/installation
 
-#### docker-sync
-
-https://github.com/EugenMayer/docker-sync/wiki/1.-Installation
-
 ### Setup
 
     $ git clone https://github.com/mtsmfm/language_server-ruby.git
     $ cd language_server-ruby
-    $ docker-sync start
     $ docker-compose run app bin/setup
 
 ### Run test

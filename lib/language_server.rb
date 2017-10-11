@@ -2,6 +2,7 @@ require "language_server/version"
 require "language_server/logger"
 require "language_server/protocol"
 require "language_server/linter/ruby_wc"
+require "language_server/linter/rubocop"
 require "language_server/completion_provider/rcodetools"
 require "language_server/completion_provider/ad_hoc"
 require "language_server/definition_provider/ad_hoc"
@@ -90,11 +91,13 @@ module LanguageServer
 
   on :"textDocument/didChange" do |request:, notifier:, file_store:, project:|
     uri = request[:params][:textDocument][:uri]
+    filePath = uri.match(/^file:\/\/(.*\.rb)/)[1]
     text = request[:params][:contentChanges][0][:text]
     file_store.cache(uri, text)
     project.recalculate_result(uri)
+    diagnostics = (Linter::Rubocop.new(filePath).call + Linter::RubyWC.new(text).call).flatten
 
-    diagnostics = Linter::RubyWC.new(text).call.map do |error|
+    diagnostics = diagnostics.map do |error|
       Protocol::Interface::Diagnostic.new(
         message: error.message,
         severity: error.warning? ? Protocol::Constant::DiagnosticSeverity::WARNING : Protocol::Constant::DiagnosticSeverity::ERROR,

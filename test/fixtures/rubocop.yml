@@ -1,0 +1,7 @@
+AllCops:
+  DisabledByDefault: true
+
+Lint/UselessAssignment:
+  Enabled: true
+StringLiterals:
+  EnforcedStyle: single_quotes

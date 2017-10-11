@@ -8,6 +8,7 @@ RUN mkdir /app /vendor && chown -R ruby:ruby /app /vendor
 ENV LANG=C.UTF-8 \
   BUNDLE_PATH=/vendor/bundle/$RUBY_VERSION \
   BUNDLE_JOBS=4
+ENV PATH=$PATH:/vendor/bundle/$RUBY_VERSION/bin
 
 USER ruby
 WORKDIR /app

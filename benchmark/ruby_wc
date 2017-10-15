@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'benchmark/ips'
+require 'language_server'
+
+error_code = <<-EOS
+require "foo
+if a == "\\n"
+EOS
+warn_code = <<-EOS
+a = 1
+EOS
+valid_code = File.read(__FILE__)
+
+Benchmark.ips do |x|
+  x.report do
+    [error_code, warn_code, valid_code].each do |code|
+      LanguageServer::Linter::RubyWC.new(code).call
+    end
+  end
+end

@@ -2,6 +2,9 @@
 
 ## Not released
 
+## 0.8.0
+
+- Use RubyVM::InstructionSequence.compile instead of open3
 
 ## 0.7.0
 

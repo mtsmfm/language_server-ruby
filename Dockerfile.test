@@ -1,0 +1,20 @@
+# docker build -t lsr-test -f Dockerfile.test .
+#
+# Run the tests
+# docker run lsr-test
+#
+# Continuous testing using guard:
+# docker run -it -v $PWD:/tmp/src -w /tmp/src rt guard
+
+FROM ruby
+
+WORKDIR /app
+
+COPY lib/language_server/version.rb ./lib/language_server/
+COPY Gemfile language_server.gemspec ./
+
+RUN bundle install
+
+COPY . ./
+
+CMD rake

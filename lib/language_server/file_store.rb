@@ -73,7 +73,10 @@ module LanguageServer
     attr_reader :load_paths, :remote_root, :local_root
 
     def all_paths
-      (cache_store.keys + load_paths.flat_map {|path|
+      # LanguageServer.logger.debug("cache_store: #{cache_store}")
+      # LanguageServer.logger.debug("load_paths: #{load_paths}")
+      # (cache_store.keys + load_paths.flat_map {|path|
+      (cache_store.keys {|path|
         Dir.glob(File.join(path, "**", "*.rb"))
       }.map {|path|
         FilePath.new(local_root: local_root, remote_root: remote_root, local_path: path)
@@ -89,6 +92,7 @@ module LanguageServer
     end
 
     def read_from_local(path)
+      return '' unless File.exists?(path.local_path)
       File.read(path.local_path)
     end
 

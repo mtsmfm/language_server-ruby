@@ -7,13 +7,8 @@ module LanguageServer::Linter
     end
 
     def test_fatal_error
-      file = Tempfile.open(['bar_', '.rb']) do |v|
-        v.puts 'require "foo'
-        v
-      end
-
-      actual = Rubocop.new(file.path, @config_path).call
-
+      source = 'require "foo'
+      actual = Rubocop.new(source, @config_path).call
       assert do
         actual == [
           Error.new(
@@ -26,26 +21,16 @@ module LanguageServer::Linter
     end
 
     def test_warning_error
-      file = Tempfile.open(['bar_', '.rb']) do |v|
-        v.puts "a = 'a'"
-        v
-      end
-
-      actual = Rubocop.new(file.path, @config_path).call
-
+      source = "a = 'a'"
+      actual = Rubocop.new(source, @config_path).call
       assert do
         actual.first == Error.new(line_num: 0, message: "Useless assignment to variable - `a`.", type: 'warning')
       end
     end
 
     def test_convention_error
-      file = Tempfile.open(['bar_', '.rb']) do |v|
-        v.puts 'require "foo"'
-        v
-      end
-
-      actual = Rubocop.new(file.path, @config_path).call
-
+      source = 'require "foo"'
+      actual = Rubocop.new(source, @config_path).call
       assert do
         actual.first == Error.new(line_num: 0, message: "Prefer single-quoted strings when you don't need string interpolation or special symbols.", type: 'warning')
       end

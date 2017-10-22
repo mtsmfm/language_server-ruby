@@ -91,11 +91,10 @@ module LanguageServer
 
   on :"textDocument/didChange" do |request:, notifier:, file_store:, project:|
     uri = request[:params][:textDocument][:uri]
-    filePath = uri.match(/^file:\/\/(.*\.rb)/)[1]
     text = request[:params][:contentChanges][0][:text]
     file_store.cache(uri, text)
     project.recalculate_result(uri)
-    diagnostics = (Linter::Rubocop.new(filePath).call + Linter::RubyWC.new(text).call).flatten
+    diagnostics = (Linter::Rubocop.new(text).call + Linter::RubyWC.new(text).call).flatten
 
     diagnostics = diagnostics.map do |error|
       Protocol::Interface::Diagnostic.new(

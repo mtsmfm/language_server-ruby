@@ -6,26 +6,29 @@ end
 module LanguageServer
   module Linter
     class Rubocop
-      def initialize(path, config_path="")
-        @path = path
+      def initialize(source, config_path="")
+        @source = source
         @config_path = config_path
       end
 
 
       def call
         return [] unless defined? ::RuboCop
-        args = ["--format", "json", @path]
+        args = []
         args += ["--config", @config_path] if @config_path != ''
-        options, paths = ::RuboCop::Options.new.parse(args)
-        config_store = ::RuboCop::ConfigStore.new
-        config_store.options_config = options[:config] if options[:config]
+        args += ["--format", "json","--stdin", "lsp_buffer.rb"]
         o = nil
         begin
+          $stdin = StringIO.new(@source)
           $stdout = StringIO.new
+          config_store = ::RuboCop::ConfigStore.new
+          options, paths = ::RuboCop::Options.new.parse(args)
+          config_store.options_config = options[:config] if options[:config]
           runner = ::RuboCop::Runner.new(options, config_store)
           runner.run(paths)
           o = $stdout.string
         ensure
+          $stdin = STDIN
           $stdout = STDOUT
         end
         return [] unless o

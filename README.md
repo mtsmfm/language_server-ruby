@@ -56,9 +56,17 @@ https://docs.docker.com/engine/installation
 
 ### Run test
 
+You can run test via m:
+
     $ docker-compose run app bin/m
     $ docker-compose run ruby-2-3 bin/m
     $ docker-compose run ruby-2-2 bin/m
+
+Or run via guard:
+
+    $ docker-compose run app bin/guard
+    $ docker-compose run ruby-2-3 bin/guard
+    $ docker-compose run ruby-2-2 bin/guard
 
 ## Contributing
 

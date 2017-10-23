@@ -1,3 +1,5 @@
+# Continuous testing using guard:
+# docker-compose run -v $PWD:/tmp/src -w /tmp/src app bash -c 'bundle && guard'
 version: '3.0'
 services:
   app: &app

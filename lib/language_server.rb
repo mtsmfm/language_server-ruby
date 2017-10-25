@@ -67,6 +67,7 @@ module LanguageServer
   end
 
   on :initialize do |request:, variables:|
+    $LOAD_PATH << request[:params][:rootPath] if $LOAD_PATH
     variables[:file_store] = FileStore.new(load_paths: $LOAD_PATH, remote_root: request[:params][:rootPath], local_root: Dir.getwd)
     variables[:project] = Project.new(variables[:file_store])
 

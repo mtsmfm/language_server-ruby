@@ -79,7 +79,9 @@ module LanguageServer
 
       def get_character_from_message(error_message)
         error_character_index_line = error_message.split("\n")[2]
-        return error_character_index_line.index("^") unless error_character_index_line.nil?
+        if !error_character_index_line.nil? && character = error_character_index_line.index("^")
+          return character
+        end
         0
       end
     end

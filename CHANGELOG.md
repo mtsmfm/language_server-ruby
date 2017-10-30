@@ -2,6 +2,8 @@
 
 ## Not released
 
+## 0.9.0
+
 - rubocop support #27
 
 ## 0.8.0

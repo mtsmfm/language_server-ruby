@@ -10,6 +10,9 @@ module LanguageServer
         candidates_with_class(*args)
       rescue NewCodeError, RuntimeDataError, NoCandidates
         [nil, []]
+      rescue Exception => exception
+        LanguageServer.logger.debug("CompletionProvider exception: #{exception}")
+        [nil, []]
       end
     end
 

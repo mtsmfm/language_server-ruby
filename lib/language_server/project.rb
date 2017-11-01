@@ -12,6 +12,11 @@ module LanguageServer
     def find_definitions(uri:, line:, character:)
       result = result_store[file_store.path_from_remote_uri(uri)]
 
+      if result.nil?
+        LanguageServer.logger.debug("result is nil in find_definitions.  Maybe we're still warming up?")
+        return []
+      end
+
       ref = result.refs.select {|node| node.lines.include?(line) && node.characters.include?(character) }.min_by {|node| node.characters.size }
 
       return [] unless ref
@@ -24,22 +29,30 @@ module LanguageServer
       calculate(file_store.read(path), path)
     end
 
-    def constants(uri: nil, line: nil, character: nil)
+    def things(uri: nil, line: nil, character: nil, group: nil)
       node = find_nearest_node(uri: uri, line: line, character: character) if uri && line && character
+      if node == []
+        LanguageServer.logger.debug("Node is an empty array?  Let's pass.")
+        return []
+      end
 
-      lazy_constants.select {|n| n.names[0..-2] == Array(node && node.names).first(n.names.size - 1) }.force
+      result_store.each do |item|
+        LanguageServer.logger.debug("item: #{item.inspect}")
+      end
+
+      group.select {|n| n.names[0..-2] == Array(node && node.names).first(n.names.size - 1) }.force
+    end
+
+    def constants(uri: nil, line: nil, character: nil)
+      things(uri: uri, line: line, character: character, group: lazy_constants)
     end
 
     def modules(uri: nil, line: nil, character: nil)
-      node = find_nearest_node(uri: uri, line: line, character: character) if uri && line && character
-
-      lazy_modules.select {|n| n.names[0..-2] == Array(node && node.names).first(n.names.size - 1) }.force
+      things(uri: uri, line: line, character: character, group: lazy_modules)
     end
 
     def classes(uri: nil, line: nil, character: nil)
-      node = find_nearest_node(uri: uri, line: line, character: character) if uri && line && character
-
-      lazy_classes.select {|n| n.names[0..-2] == Array(node && node.names).first(n.names.size - 1) }.force
+      things(uri: uri, line: line, character: character, group: lazy_classes)
     end
 
     private
@@ -66,6 +79,11 @@ module LanguageServer
 
     def find_nearest_node(uri:, line:, character:)
       result = result_store[file_store.path_from_remote_uri(uri)]
+
+      if result.nil?
+        LanguageServer.logger.debug("result is nil in find_nearest_node.  Maybe we're still warming up?")
+        return []
+      end
 
       (result.modules + result.classes).select {|node| node.lines.include?(line) }.min_by {|node| node.lines.size }
     end

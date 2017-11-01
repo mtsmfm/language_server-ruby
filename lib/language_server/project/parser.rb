@@ -17,6 +17,8 @@ module LanguageServer
 
       class << self
         def parse(src, path = nil)
+          # LanguageServer.logger.debug("parse src: #{src}")
+
           new(src, path).tap(&:parse).result
         end
       end

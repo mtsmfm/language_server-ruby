@@ -1,0 +1,7 @@
+inherit_from:
+  - https://github.com/onk/onkcop/raw/v0.51.0.0/config/rubocop.yml
+
+AllCops:
+  TargetRubyVersion: 2.2
+  Exclude:
+    - 'bin/**/*'

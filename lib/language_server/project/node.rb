@@ -6,12 +6,10 @@ module LanguageServer
           attr_accessor(*attrs)
           attribute_names.concat(attrs)
           class_eval <<-RUBY, __FILE__, __LINE__
-def initialize(#{attribute_names.map {|n| "#{n}:" }.join(',')})
-  #{
-    attribute_names.map {|n|
+def initialize(#{attribute_names.map { |n| "#{n}:" }.join(",")})
+  #{attribute_names.map { |n|
       "@#{n} = #{n}"
-    }.join("\n")
-  }
+    }.join("\n")}
 end
           RUBY
         end
@@ -23,8 +21,13 @@ end
 
       attributes :lineno, :character, :path
 
-      def remote_path; path.remote_path; end
-      def local_path;  path.local_path;  end
+      def remote_path
+        path.remote_path
+      end
+
+      def local_path
+        path.local_path
+      end
 
       def eql?(other)
         other.instance_of?(self.class) && attributes == other.attributes
@@ -39,7 +42,7 @@ end
       end
 
       def attributes
-        self.class.attribute_names.map {|a|
+        self.class.attribute_names.map { |a|
           [a, public_send(a)]
         }.to_h
       end
@@ -57,7 +60,7 @@ end
       end
 
       def full_name
-        names.join('::')
+        names.join("::")
       end
     end
 
@@ -68,7 +71,7 @@ end
     class Module < Node
       attributes :constant, :children
 
-      %i(name namespaces full_name names).each do |m|
+      %i[name namespaces full_name names].each do |m|
         define_method(m) { constant.__send__(m) }
       end
 
@@ -117,7 +120,7 @@ end
       end
 
       def full_name
-        names.join('::')
+        names.join("::")
       end
 
       def inspect
@@ -149,7 +152,7 @@ end
       end
 
       def full_name
-        names.join('::')
+        names.join("::")
       end
 
       def inspect

@@ -1,4 +1,4 @@
-require 'logger'
+require "logger"
 
 module LanguageServer
   class << self
@@ -8,16 +8,16 @@ module LanguageServer
   end
 
   class Formatter
-    RESET = "\e[0m"
-    RED = "\e[31m"
-    YELLOW = "\e[33m"
+    RESET = "\e[0m".freeze
+    RED = "\e[31m".freeze
+    YELLOW = "\e[33m".freeze
 
     def call(severity, *rest)
       msg = default_message(severity, *rest)
       case severity
-      when 'ERROR'
+      when "ERROR"
         RED + msg + RESET
-      when 'WARN'
+      when "WARN"
         YELLOW + msg + RESET
       else
         msg
@@ -26,12 +26,12 @@ module LanguageServer
 
     private
 
-    def default_message(*args)
-      default_formatter.call(*args)
-    end
+      def default_message(*args)
+        default_formatter.call(*args)
+      end
 
-    def default_formatter
-      @default_formatter ||= ::Logger::Formatter.new
-    end
+      def default_formatter
+        @default_formatter ||= ::Logger::Formatter.new
+      end
   end
 end

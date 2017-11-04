@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 module LanguageServer
   module CompletionProvider
@@ -18,7 +18,7 @@ module LanguageServer
         candidates = [
           Protocol::Interface::CompletionItem.new(label: "last",   kind: Protocol::Constant::CompletionItemKind::METHOD, detail: "Array#last"),
           Protocol::Interface::CompletionItem.new(label: "lazy",   kind: Protocol::Constant::CompletionItemKind::METHOD, detail: "Enumerable#lazy"),
-          Protocol::Interface::CompletionItem.new(label: "length", kind: Protocol::Constant::CompletionItemKind::METHOD, detail: "Array#length")
+          Protocol::Interface::CompletionItem.new(label: "length", kind: Protocol::Constant::CompletionItemKind::METHOD, detail: "Array#length"),
         ]
 
         assert { provider.call.to_json == candidates.to_json }

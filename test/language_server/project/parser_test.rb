@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 module LanguageServer
   class Project
@@ -10,7 +10,7 @@ module LanguageServer
 
         result = Parser.parse(body)
 
-        assert { result.constants.map(&:full_name) == %w(TOP_LEVEL_CONST) }
+        assert { result.constants.map(&:full_name) == %w[TOP_LEVEL_CONST] }
       end
 
       def test_const_within_class_and_module
@@ -24,8 +24,8 @@ module LanguageServer
 
         result = Parser.parse(body)
 
-        assert { result.modules.map(&:full_name) == %w(Cls::Mod) }
-        assert { result.constants.map(&:full_name) == %w(Cls::Mod::CONST) }
+        assert { result.modules.map(&:full_name) == %w[Cls::Mod] }
+        assert { result.constants.map(&:full_name) == %w[Cls::Mod::CONST] }
       end
 
       def test_class
@@ -36,7 +36,7 @@ module LanguageServer
 
         result = Parser.parse(body)
 
-        assert { result.classes.map(&:full_name) == %w(Hi) }
+        assert { result.classes.map(&:full_name) == %w[Hi] }
       end
 
       def test_module
@@ -47,7 +47,7 @@ module LanguageServer
 
         result = Parser.parse(body)
 
-        assert { result.modules.map(&:full_name) == %w(Hi) }
+        assert { result.modules.map(&:full_name) == %w[Hi] }
       end
 
       def test_module_with_method
@@ -60,7 +60,7 @@ module LanguageServer
 
         result = Parser.parse(body)
 
-        assert { result.modules.map(&:full_name) == %w(Hi) }
+        assert { result.modules.map(&:full_name) == %w[Hi] }
       end
 
       def test_ref
@@ -68,7 +68,7 @@ module LanguageServer
           A
         EOS
 
-        assert { result.refs.map {|r| [r.full_name, r.characters] } == [['A', 0..1]] }
+        assert { result.refs.map { |r| [r.full_name, r.characters] } == [["A", 0..1]] }
       end
 
       def test_ref_2
@@ -76,7 +76,7 @@ module LanguageServer
           A::B
         EOS
 
-        assert { result.refs.map {|r| [r.full_name, r.characters] } == [['A', 0..2], ['A::B', 0..3]] }
+        assert { result.refs.map { |r| [r.full_name, r.characters] } == [["A", 0..2], ["A::B", 0..3]] }
       end
 
       def test_ref_3
@@ -84,7 +84,7 @@ module LanguageServer
           A::B::C
         EOS
 
-        assert { result.refs.map {|r| [r.full_name, r.characters] } == [['A', 0..2], ['A::B', 0..3], ['A::B::C', 0..6]] }
+        assert { result.refs.map { |r| [r.full_name, r.characters] } == [["A", 0..2], ["A::B", 0..3], ["A::B::C", 0..6]] }
       end
 
       def test_ref_within_module
@@ -94,7 +94,7 @@ module LanguageServer
           end
         EOS
 
-        assert { result.refs.map {|r| [r.full_name, r.characters] } == [['A::B', 2..3]] }
+        assert { result.refs.map { |r| [r.full_name, r.characters] } == [["A::B", 2..3]] }
 
         result = Parser.parse(<<-EOS.strip_heredoc)
           module A
@@ -102,7 +102,7 @@ module LanguageServer
           end
         EOS
 
-        assert { result.refs.map {|r| [r.full_name, r.characters] } == [['A::B', 2..4], ['A::B::C', 2..5]] }
+        assert { result.refs.map { |r| [r.full_name, r.characters] } == [["A::B", 2..4], ["A::B::C", 2..5]] }
       end
 
       def test_const_ref_with_method
@@ -123,7 +123,7 @@ module LanguageServer
           end
         EOS
 
-        assert { result.classes.map(&:full_name) == %w(A::B::C::D::E) }
+        assert { result.classes.map(&:full_name) == %w[A::B::C::D::E] }
       end
     end
   end

@@ -15,20 +15,20 @@ module LanguageServer
             range: Protocol::Interface::Range.new(
               start: Protocol::Interface::Position.new(
                 line: n.lines.begin,
-                character: 0
+                character: 0,
               ),
               end: Protocol::Interface::Position.new(
                 line: n.lines.end,
-                character: 0
-              )
-            )
+                character: 0,
+              ),
+            ),
           )
         end
       end
 
       private
 
-      attr_reader :uri, :line, :character, :project
+        attr_reader :uri, :line, :character, :project
     end
   end
 end

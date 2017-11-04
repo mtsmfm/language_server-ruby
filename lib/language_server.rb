@@ -37,7 +37,7 @@ module LanguageServer
 
         method = request[:method].to_sym
 
-        _, subscriber = subscribers.find {|k, _|
+        _, subscriber = subscribers.find { |k, _|
           k === method
         }
 
@@ -46,7 +46,7 @@ module LanguageServer
           result = subscriber.call(
             {
               request: request, notifier: writer.method(:notify), variables: variables
-            }.merge(variables).select {|k, _| keys.include?(k) }
+            }.merge(variables).select { |k, _| keys.include?(k) },
           )
 
           if request[:id]
@@ -74,14 +74,14 @@ module LanguageServer
     Protocol::Interface::InitializeResult.new(
       capabilities: Protocol::Interface::ServerCapabilities.new(
         text_document_sync: Protocol::Interface::TextDocumentSyncOptions.new(
-          change: Protocol::Constant::TextDocumentSyncKind::FULL
+          change: Protocol::Constant::TextDocumentSyncKind::FULL,
         ),
         completion_provider: Protocol::Interface::CompletionOptions.new(
           resolve_provider: true,
-          trigger_characters: %w(.)
+          trigger_characters: %w[.],
         ),
-        definition_provider: true
-      )
+        definition_provider: true,
+      ),
     )
   end
 
@@ -103,13 +103,13 @@ module LanguageServer
         range: Protocol::Interface::Range.new(
           start: Protocol::Interface::Position.new(
             line: error.line_num,
-            character: 0
+            character: 0,
           ),
           end: Protocol::Interface::Position.new(
             line: error.line_num,
-            character: 0
-          )
-        )
+            character: 0,
+          ),
+        ),
       )
     end
 
@@ -117,8 +117,8 @@ module LanguageServer
       method: :"textDocument/publishDiagnostics",
       params: Protocol::Interface::PublishDiagnosticsParams.new(
         uri: uri,
-        diagnostics: diagnostics
-      )
+        diagnostics: diagnostics,
+      ),
     )
   end
 
@@ -128,7 +128,7 @@ module LanguageServer
 
     [
       CompletionProvider::AdHoc.new(uri: uri, line: line, character: character, project: project),
-      CompletionProvider::Rcodetools.new(uri: uri, line: line, character: character, file_store: file_store)
+      CompletionProvider::Rcodetools.new(uri: uri, line: line, character: character, file_store: file_store),
     ].flat_map(&:call)
   end
 

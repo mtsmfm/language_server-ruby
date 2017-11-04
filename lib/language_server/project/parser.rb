@@ -1,5 +1,5 @@
-require 'language_server/project/node'
-require 'ripper'
+require "language_server/project/node"
+require "ripper"
 
 module LanguageServer
   class Project
@@ -32,79 +32,79 @@ module LanguageServer
 
       private
 
-      alias character column
+        alias_method :character, :column
 
-      attr_reader :path
+        attr_reader :path
 
-      def lineno
-        # Language Server Protocol's lineno is zero origin
-        super - 1
-      end
+        def lineno
+          # Language Server Protocol's lineno is zero origin
+          super - 1
+        end
 
-      def on_var_ref(node)
-        if node.instance_of?(Constant)
-          build_node(VarRef, node: node).tap do |n|
-            result.refs << n
+        def on_var_ref(node)
+          if node.instance_of?(Constant)
+            build_node(VarRef, node: node).tap do |n|
+              result.refs << n
+            end
+          else
+            node
           end
-        else
-          node
         end
-      end
 
-      def on_const_path_ref(*nodes)
-        if nodes.all? {|n| [Constant, ConstPathRef, VarRef].include?(n.class) }
-          build_node(ConstPathRef, nodes: nodes).tap do |n|
-            result.refs << n
+        def on_const_path_ref(*nodes)
+          if nodes.all? { |n| [Constant, ConstPathRef, VarRef].include?(n.class) }
+            build_node(ConstPathRef, nodes: nodes).tap do |n|
+              result.refs << n
+            end
+          else
+            nodes
           end
-        else
-          nodes
         end
-      end
 
-      def on_const(name)
-        build_node(Constant, namespaces: [], name: name, value: nil)
-      end
-
-      def on_def(*args)
-        args.flatten.compact
-      end
-
-      def on_int(value)
-        build_node(LiteralValue, value: value.to_i)
-      end
-
-      def on_stmts_add(*args)
-        args.flatten.compact
-      end
-
-      def on_assign(left, right)
-        result.constants << left if Constant === left
-
-        left.value = right if left.respond_to?(:value) # TODO: remove this condition
-        left
-      end
-
-      def on_module(constant, children)
-        cn = children.select {|child| child.respond_to?(:unshift_namespace) }
-
-        build_node(Module, constant: constant, children: cn).tap do |m|
-          result.modules << m
-          cn.each {|child| child.unshift_namespace(m) }
+        def on_const(name)
+          build_node(Constant, namespaces: [], name: name, value: nil)
         end
-      end
 
-      def on_class(constant, superclass, children)
-        cn = children.select {|child| child.respond_to?(:unshift_namespace) }
-
-        build_node(Class, constant: constant, superclass: superclass, children: cn).tap do |c|
-          result.classes << c
-          cn.each {|child| child.unshift_namespace(c) }
+        def on_def(*args)
+          args.flatten.compact
         end
-      end
 
-      def build_node(klass, **args)
-        klass.new({lineno: lineno, character: character, path: path}.merge(args))
-      end
+        def on_int(value)
+          build_node(LiteralValue, value: value.to_i)
+        end
+
+        def on_stmts_add(*args)
+          args.flatten.compact
+        end
+
+        def on_assign(left, right)
+          result.constants << left if Constant === left
+
+          left.value = right if left.respond_to?(:value) # TODO: remove this condition
+          left
+        end
+
+        def on_module(constant, children)
+          cn = children.select { |child| child.respond_to?(:unshift_namespace) }
+
+          build_node(Module, constant: constant, children: cn).tap do |m|
+            result.modules << m
+            cn.each { |child| child.unshift_namespace(m) }
+          end
+        end
+
+        def on_class(constant, superclass, children)
+          cn = children.select { |child| child.respond_to?(:unshift_namespace) }
+
+          build_node(Class, constant: constant, superclass: superclass, children: cn).tap do |c|
+            result.classes << c
+            cn.each { |child| child.unshift_namespace(c) }
+          end
+        end
+
+        def build_node(klass, **args)
+          klass.new({ lineno: lineno, character: character, path: path }.merge(args))
+        end
     end
   end
 end

@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+set -ex
+
+bin/setup
+bin/rubocop
+bin/m

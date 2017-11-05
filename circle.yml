@@ -20,8 +20,7 @@ jobs:
             docker cp . project:/app
             docker start project
             docker-compose build $SERVICE_NAME
-      - run: docker-compose run $SERVICE_NAME bin/setup
-      - run: docker-compose run $SERVICE_NAME bin/m
+      - run: docker-compose run $SERVICE_NAME bin/ci
   test-2-3:
     <<: *test
     docker:

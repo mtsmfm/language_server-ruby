@@ -37,9 +37,7 @@ module LanguageServer
 
         method = request[:method].to_sym
 
-        _, subscriber = subscribers.find { |k, _|
-          k === method
-        }
+        subscriber = subscribers[method]
 
         if subscriber
           keys = subscriber.parameters.map(&:last)

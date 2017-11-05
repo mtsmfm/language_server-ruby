@@ -78,7 +78,7 @@ module LanguageServer
         end
 
         def on_assign(left, right)
-          result.constants << left if Constant === left
+          result.constants << left if left.instance_of?(Constant)
 
           left.value = right if left.respond_to?(:value) # TODO: remove this condition
           left

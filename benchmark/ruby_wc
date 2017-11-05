@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-require 'bundler/setup'
-require 'benchmark/ips'
-require 'language_server'
+require "bundler/setup"
+require "benchmark/ips"
+require "language_server"
 
 error_code = <<-EOS
 require "foo

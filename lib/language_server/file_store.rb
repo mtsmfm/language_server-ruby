@@ -64,36 +64,36 @@ module LanguageServer
 
     def each(&block)
       all_paths.each do |path|
-        block.call(read(path), path)
+        yield(read(path), path)
       end
     end
 
     private
 
-    attr_reader :load_paths, :remote_root, :local_root
+      attr_reader :load_paths, :remote_root, :local_root
 
-    def all_paths
-      (cache_store.keys + load_paths.flat_map {|path|
-        Dir.glob(File.join(path, "**", "*.rb"))
-      }.map {|path|
-        FilePath.new(local_root: local_root, remote_root: remote_root, local_path: path)
-      }).uniq
-    end
+      def all_paths
+        (cache_store.keys + load_paths.flat_map { |path|
+          Dir.glob(File.join(path, "**", "*.rb"))
+        }.map { |path|
+          FilePath.new(local_root: local_root, remote_root: remote_root, local_path: path)
+        }).uniq
+      end
 
-    def exists_on_cache?(path)
-      cache_store.key?(path)
-    end
+      def exists_on_cache?(path)
+        cache_store.has_key?(path)
+      end
 
-    def read_from_cache(path)
-      cache_store[path]
-    end
+      def read_from_cache(path)
+        cache_store[path]
+      end
 
-    def read_from_local(path)
-      File.read(path.local_path)
-    end
+      def read_from_local(path)
+        File.read(path.local_path)
+      end
 
-    def cache_store
-      @cache_store ||= {}
-    end
+      def cache_store
+        @cache_store ||= {}
+      end
   end
 end

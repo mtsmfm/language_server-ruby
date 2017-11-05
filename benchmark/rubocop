@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-require 'bundler/setup'
-require 'benchmark/ips'
-require 'language_server'
+require "bundler/setup"
+require "benchmark/ips"
+require "language_server"
 
 error_code = <<-EOS
 require "foo
@@ -13,7 +13,7 @@ a = 1
 EOS
 valid_code = File.read(__FILE__)
 
-require 'pry-byebug'
+require "pry-byebug"
 
 LanguageServer::Linter::Rubocop.new(valid_code).call
 Benchmark.ips do |x|

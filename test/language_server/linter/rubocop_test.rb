@@ -1,9 +1,9 @@
-require 'test_helper'
+require "test_helper"
 
 module LanguageServer::Linter
   class RubocopTest < Minitest::Test
     def setup
-      @config_path = File.expand_path('./../../../fixtures/rubocop.yml', __FILE__)
+      @config_path = File.expand_path("./../../../fixtures/rubocop.yml", __FILE__)
     end
 
     def test_fatal_error
@@ -14,8 +14,8 @@ module LanguageServer::Linter
           Error.new(
             line_num: 0,
             message: "unterminated string meets end of file\n(Using Ruby 2.1 parser; configure using `TargetRubyVersion` parameter, under `AllCops`)",
-            type: 'error'
-          )
+            type: "error",
+          ),
         ]
       end
     end
@@ -24,7 +24,7 @@ module LanguageServer::Linter
       source = "a = 'a'"
       actual = Rubocop.new(source, @config_path).call
       assert do
-        actual.first == Error.new(line_num: 0, message: "Useless assignment to variable - `a`.", type: 'warning')
+        actual.first == Error.new(line_num: 0, message: "Useless assignment to variable - `a`.", type: "warning")
       end
     end
 
@@ -32,7 +32,7 @@ module LanguageServer::Linter
       source = 'require "foo"'
       actual = Rubocop.new(source, @config_path).call
       assert do
-        actual.first == Error.new(line_num: 0, message: "Prefer single-quoted strings when you don't need string interpolation or special symbols.", type: 'warning')
+        actual.first == Error.new(line_num: 0, message: "Prefer single-quoted strings when you don't need string interpolation or special symbols.", type: "warning")
       end
     end
   end

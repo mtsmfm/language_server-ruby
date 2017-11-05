@@ -1,22 +1,21 @@
 begin
-  require 'rubocop'
+  require "rubocop"
 rescue LoadError
 end
 
 module LanguageServer
   module Linter
     class Rubocop
-      def initialize(source, config_path="")
+      def initialize(source, config_path = "")
         @source = source
         @config_path = config_path
       end
 
-
       def call
         return [] unless defined? ::RuboCop
         args = []
-        args += ["--config", @config_path] if @config_path != ''
-        args += ["--format", "json","--stdin", "lsp_buffer.rb"]
+        args += ["--config", @config_path] if @config_path != ""
+        args += ["--format", "json", "--stdin", "lsp_buffer.rb"]
         o = nil
         begin
           $stdin = StringIO.new(@source)
@@ -32,24 +31,23 @@ module LanguageServer
           $stdout = STDOUT
         end
         return [] unless o
-        JSON
-          .parse(o)['files'].map { |v| v['offenses'] }
-          .flatten
-          .map { |v| Error.new(line_num: v['location']['line'].to_i - 1, message: v['message'], type: convert_type(v['severity'])) }
+        JSON.
+          parse(o)["files"].map { |v| v["offenses"] }.
+          flatten.
+          map { |v| Error.new(line_num: v["location"]["line"].to_i - 1, message: v["message"], type: convert_type(v["severity"])) }
       end
 
       private
 
-      def convert_type(type)
-        case type
-        when 'refactor' then 'warning'
-        when 'convention' then 'warning'
-        when 'warning' then 'warning'
-        when 'error' then 'error'
-        when 'fatal' then 'error'
+        def convert_type(type)
+          case type
+          when "refactor" then "warning"
+          when "convention" then "warning"
+          when "warning" then "warning"
+          when "error" then "error"
+          when "fatal" then "error"
+          end
         end
-      end
-
     end
   end
 end

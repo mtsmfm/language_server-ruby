@@ -28,16 +28,16 @@ module LanguageServer
           Protocol::Interface::CompletionItem.new(
             label: method_name,
             detail: description,
-            kind: Protocol::Constant::CompletionItemKind::METHOD
+            kind: Protocol::Constant::CompletionItemKind::METHOD,
           )
         end
       end
 
       private
 
-      def source
-        @file_store.read_remote_uri(@uri)
-      end
+        def source
+          @file_store.read_remote_uri(@uri)
+        end
     end
   end
 end

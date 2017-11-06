@@ -35,6 +35,14 @@ jobs:
         environment:
           COMPOSE_FILE: docker-compose.yml:docker-compose.ci.yml
           SERVICE_NAME: ruby-2-2
+  test-docker-build:
+    docker:
+      - image: docker
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: docker build .
 workflows:
   version: 2
   test:
@@ -42,3 +50,4 @@ workflows:
       - test-2-4
       - test-2-3
       - test-2-2
+      - test-docker-build

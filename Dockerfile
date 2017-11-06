@@ -1,5 +1,7 @@
 FROM ruby:2.4.2-alpine
 
+RUN apk add --no-cache git
+
 WORKDIR /app
 
 COPY lib/language_server/version.rb /app/lib/language_server/

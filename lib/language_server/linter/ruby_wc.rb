@@ -5,7 +5,7 @@ module LanguageServer
     class Error
       attr_reader :line_num, :character, :message, :type
 
-      def initialize(line_num:, character:, message:, type:)
+      def initialize(line_num:, character: 0, message:, type:)
         @line_num = line_num
         @character = character
         @message = message

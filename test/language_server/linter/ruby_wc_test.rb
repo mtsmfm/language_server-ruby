@@ -19,7 +19,7 @@ module LanguageServer::Linter
       EOS
 
       assert {
-        linter.call == [Error.new(line_num: 0, character: 0, message: "assigned but unused variable - a", type: "warning")]
+        linter.call == [Error.new(line_num: 0, message: "assigned but unused variable - a", type: "warning")]
       }
     end
   end

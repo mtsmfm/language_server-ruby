@@ -13,7 +13,11 @@ require "json"
 
 module LanguageServer
   class << self
-    def run
+    attr_accessor :options
+
+    def run(options)
+      self.options = options
+
       writer = Protocol::Transport::Stdio::Writer.new
       reader = Protocol::Transport::Stdio::Reader.new
       variables = {}
@@ -56,6 +60,14 @@ module LanguageServer
       end
     end
 
+    def rubocop_enabled?
+      options[:experimental_features_enabled]
+    end
+
+    def adhoc_enabled?
+      options[:experimental_features_enabled]
+    end
+
     def subscribers
       @subscribers ||= {}
     end
@@ -67,7 +79,10 @@ module LanguageServer
 
   on :initialize do |request:, variables:|
     variables[:file_store] = FileStore.new(load_paths: $LOAD_PATH, remote_root: request[:params][:rootPath], local_root: Dir.getwd)
-    variables[:project] = Project.new(variables[:file_store])
+    variables[:project] =
+      if LanguageServer.adhoc_enabled?
+        variables[:project] = Project.new(variables[:file_store])
+      end
 
     Protocol::Interface::InitializeResult.new(
       capabilities: Protocol::Interface::ServerCapabilities.new(
@@ -78,7 +93,7 @@ module LanguageServer
           resolve_provider: true,
           trigger_characters: %w[.],
         ),
-        definition_provider: true,
+        definition_provider: LanguageServer.adhoc_enabled?,
       ),
     )
   end
@@ -91,8 +106,10 @@ module LanguageServer
     uri = request[:params][:textDocument][:uri]
     text = request[:params][:contentChanges][0][:text]
     file_store.cache(uri, text)
-    project.recalculate_result(uri)
-    diagnostics = (Linter::Rubocop.new(text).call + Linter::RubyWC.new(text).call).flatten
+    project.recalculate_result(uri) if LanguageServer.adhoc_enabled?
+
+    diagnostics = Linter::RubyWC.new(text).call
+    diagnostics += Linter::Rubocop.new(text).call if LanguageServer.rubocop_enabled?
 
     diagnostics = diagnostics.map do |error|
       Protocol::Interface::Diagnostic.new(
@@ -124,18 +141,20 @@ module LanguageServer
     uri = request[:params][:textDocument][:uri]
     line, character = request[:params][:position].fetch_values(:line, :character).map(&:to_i)
 
-    [
-      CompletionProvider::AdHoc.new(uri: uri, line: line, character: character, project: project),
-      CompletionProvider::Rcodetools.new(uri: uri, line: line, character: character, file_store: file_store),
-    ].flat_map(&:call)
+    providers = [CompletionProvider::Rcodetools.new(uri: uri, line: line, character: character, file_store: file_store)]
+    providers << CompletionProvider::AdHoc.new(uri: uri, line: line, character: character, project: project) if LanguageServer.adhoc_enabled?
+
+    providers.flat_map(&:call)
   end
 
   on :"textDocument/definition" do |request:, project:|
     uri = request[:params][:textDocument][:uri]
     line, character = request[:params][:position].fetch_values(:line, :character).map(&:to_i)
 
-    [
-      DefinitionProvider::AdHoc.new(uri: uri, line: line, character: character, project: project),
-    ].flat_map(&:call)
+    if LanguageServer.adhoc_enabled?
+      [
+        DefinitionProvider::AdHoc.new(uri: uri, line: line, character: character, project: project),
+      ].flat_map(&:call)
+    end
   end
 end

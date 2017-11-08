@@ -2,6 +2,8 @@
 
 ## Not released
 
+- Add --experimental-features flag
+
 ## 0.9.0
 
 - rubocop support #27

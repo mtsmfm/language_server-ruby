@@ -1,5 +1,7 @@
 # LanguageServer
 
+[Alpha quality]
+
 A Ruby Language Server implementation.
 
 ## Installation

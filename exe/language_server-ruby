@@ -5,4 +5,26 @@ if Dir.exist?(File.join(__dir__, "..", ".git"))
 end
 
 require "language_server"
-LanguageServer.run
+require "optparse"
+
+options = { experimental_features_enabled: false }
+opt_parser = OptionParser.new do |opts|
+  opts.banner = "Usage: language_server-ruby [options]"
+
+  opts.on("--experimental-features", "Enable experimental features") do |e|
+    options[:experimental_features_enabled] = e
+  end
+
+  opts.on("-v", "--version", "Show version") do
+    puts LanguageServer::VERSION
+    exit
+  end
+end
+begin
+  opt_parser.parse!
+rescue OptionParser::InvalidOption
+  puts opt_parser
+  exit 1
+end
+
+LanguageServer.run(options)

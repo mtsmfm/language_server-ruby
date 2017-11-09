@@ -11,4 +11,4 @@ ENV LANG=C.UTF-8 \
 
 USER ruby
 WORKDIR /app
-CMD ["bin/language_server-ruby"]
+CMD ["bin/language_server-ruby", "--experimental-features"]

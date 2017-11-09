@@ -4,4 +4,4 @@ source "https://rubygems.org"
 gemspec
 
 # TODO: Use released gem after new release includes https://github.com/bbatsov/rubocop/pull/4987
-gem "rubocop", git: "https://github.com/bbatsov/rubocop"
+gem "rubocop", git: "https://github.com/bbatsov/rubocop", ref: "88d9e3b"

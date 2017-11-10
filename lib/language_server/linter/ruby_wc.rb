@@ -80,7 +80,7 @@ module LanguageServer
         def get_characters_from_error_message(error_message, line_index)
           error_mark_included_line = error_message.split("\n")[2]
 
-          if !error_mark_included_line .nil? && character_start = error_mark_included_line .index("^")
+          if !error_mark_included_line.nil? && character_start = error_mark_included_line.index("^")
             Range.new(character_start, character_start + 1)
           else
             Range.new(0, @source.split("\n")[line_index].length - 1)

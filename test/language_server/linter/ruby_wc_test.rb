@@ -9,7 +9,7 @@ module LanguageServer::Linter
       EOS
 
       assert {
-        linter.call == [Error.new(line_num: 1, message: "unexpected $undefined, expecting end-of-input", type: "syntax error")]
+        linter.call == [Error.new(line_num: 1, characters: 10..11, message: "unexpected $undefined, expecting end-of-input", type: "syntax error")]
       }
     end
 
@@ -19,7 +19,7 @@ module LanguageServer::Linter
       EOS
 
       assert {
-        linter.call == [Error.new(line_num: 0, message: "assigned but unused variable - a", type: "warning")]
+        linter.call == [Error.new(line_num: 0, characters: 0..4, message: "assigned but unused variable - a", type: "warning")]
       }
     end
   end

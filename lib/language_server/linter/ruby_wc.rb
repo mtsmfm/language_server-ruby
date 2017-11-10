@@ -3,10 +3,11 @@ require "stringio"
 module LanguageServer
   module Linter
     class Error
-      attr_reader :line_num, :message, :type
+      attr_reader :line_num, :characters, :message, :type
 
-      def initialize(line_num:, message:, type:)
+      def initialize(line_num:, characters: 0..0, message:, type:)
         @line_num = line_num
+        @characters = characters
         @message = message
         @type = type
       end
@@ -16,7 +17,7 @@ module LanguageServer
       end
 
       def ==(other)
-        line_num == other.line_num && message == other.message
+        line_num == other.line_num && characters == other.characters && message == other.message
       end
     end
 
@@ -27,7 +28,7 @@ module LanguageServer
 
       def call
         error_message.scan(/.+:(\d+):\s*(.+?)[,:]\s(.+)/).map do |line_num, type, message|
-          Error.new(line_num: line_num.to_i - 1, message: message, type: type)
+          Error.new(line_num: line_num.to_i - 1, characters: get_characters_from_error_message(error_message, line_num.to_i - 1), message: message, type: type)
         end
       end
 
@@ -74,6 +75,16 @@ module LanguageServer
           $stderr.string
         ensure
           $stderr = origin
+        end
+
+        def get_characters_from_error_message(error_message, line_index)
+          error_mark_included_line = error_message.split("\n")[2]
+
+          if !error_mark_included_line.nil? && character_start = error_mark_included_line.index("^")
+            Range.new(character_start, character_start + 1)
+          else
+            Range.new(0, @source.split("\n")[line_index].length - 1)
+          end
         end
     end
   end

@@ -27,8 +27,8 @@ module LanguageServer
       end
 
       def call
-        error_message.scan(/.+:(\d+):\s*(.+?)[,:]\s(.+)/).map do |line_num, type,  message|
-          Error.new(line_num: line_num.to_i - 1, characters: get_characters_from_error_message(error_message, line_num.to_i - 1) , message: message, type: type)
+        error_message.scan(/.+:(\d+):\s*(.+?)[,:]\s(.+)/).map do |line_num, type, message|
+          Error.new(line_num: line_num.to_i - 1, characters: get_characters_from_error_message(error_message, line_num.to_i - 1), message: message, type: type)
         end
       end
 

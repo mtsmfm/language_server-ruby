@@ -118,13 +118,13 @@ module LanguageServer
         range: Protocol::Interface::Range.new(
           start: Protocol::Interface::Position.new(
             line: error.line_num,
-            character: error.characters.min
+            character: error.characters.min,
           ),
           end: Protocol::Interface::Position.new(
             line: error.line_num,
-            character: error.characters.max
-          )
-        )
+            character: error.characters.max,
+          ),
+        ),
       )
     end
 

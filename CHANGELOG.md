@@ -2,7 +2,10 @@
 
 ## Not released
 
+## 0.10.0
+
 - Add --experimental-features flag
+  - Currently rubocop integration and adhoc provider are very unstable...
 
 ## 0.9.0
 

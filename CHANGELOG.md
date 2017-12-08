@@ -2,6 +2,8 @@
 
 ## Not released
 
+- Remove rcodetools integration (for now)
+
 ## 0.10.0
 
 - Add --experimental-features flag

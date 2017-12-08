@@ -26,7 +26,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "language_server-protocol", "0.4.0"
-  spec.add_dependency "rcodetools"
 
   spec.add_development_dependency "awesome_print"
   spec.add_development_dependency "benchmark-ips"

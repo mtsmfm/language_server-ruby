@@ -3,7 +3,6 @@ require "language_server/logger"
 require "language_server/protocol"
 require "language_server/linter/ruby_wc"
 require "language_server/linter/rubocop"
-require "language_server/completion_provider/rcodetools"
 require "language_server/completion_provider/ad_hoc"
 require "language_server/definition_provider/ad_hoc"
 require "language_server/file_store"
@@ -137,14 +136,15 @@ module LanguageServer
     )
   end
 
-  on :"textDocument/completion" do |request:, file_store:, project:|
+  on :"textDocument/completion" do |request:, project:|
     uri = request[:params][:textDocument][:uri]
     line, character = request[:params][:position].fetch_values(:line, :character).map(&:to_i)
 
-    providers = [CompletionProvider::Rcodetools.new(uri: uri, line: line, character: character, file_store: file_store)]
-    providers << CompletionProvider::AdHoc.new(uri: uri, line: line, character: character, project: project) if LanguageServer.adhoc_enabled?
-
-    providers.flat_map(&:call)
+    if LanguageServer.adhoc_enabled?
+      [
+        CompletionProvider::AdHoc.new(uri: uri, line: line, character: character, project: project),
+      ].flat_map(&:call)
+    end
   end
 
   on :"textDocument/definition" do |request:, project:|

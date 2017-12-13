@@ -88,10 +88,14 @@ module LanguageServer
         text_document_sync: Protocol::Interface::TextDocumentSyncOptions.new(
           change: Protocol::Constant::TextDocumentSyncKind::FULL,
         ),
-        completion_provider: Protocol::Interface::CompletionOptions.new(
-          resolve_provider: true,
-          trigger_characters: %w[.],
-        ),
+        completion_provider: if LanguageServer.adhoc_enabled?
+                               Protocol::Interface::CompletionOptions.new(
+                                 resolve_provider: true,
+                                 trigger_characters: %w[.],
+                               )
+                             else
+                               false
+                             end,
         definition_provider: LanguageServer.adhoc_enabled?,
       ),
     )

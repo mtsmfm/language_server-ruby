@@ -1,7 +1,7 @@
 ARG RUBY_VERSION=
 FROM ruby:$RUBY_VERSION
 
-RUN apt-get update && apt-get install less -y
+RUN apt-get update && apt-get install apt-transport-https netcat less -y
 RUN groupadd --gid 1000 ruby && useradd --uid 1000 --gid ruby --shell /bin/bash --create-home ruby
 RUN mkdir /app /vendor && chown -R ruby:ruby /app /vendor
 

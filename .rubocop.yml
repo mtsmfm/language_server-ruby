@@ -1,5 +1,5 @@
 inherit_from:
-  - https://github.com/onk/onkcop/raw/v0.51.0.0/config/rubocop.yml
+  - https://github.com/onk/onkcop/raw/v0.52.0.0/config/rubocop.yml
 
 AllCops:
   TargetRubyVersion: 2.2
@@ -43,3 +43,6 @@ Metrics/ModuleLength:
 
 Metrics/LineLength:
   Max: 200
+  Exclude:
+    # To use power_assert, we must pub assertion in one line
+    - 'test/**/*'

@@ -10,13 +10,7 @@ module LanguageServer::Linter
       source = 'require "foo'
       actual = Rubocop.new(source, @config_path).call
       assert do
-        actual == [
-          Error.new(
-            line_num: 0,
-            message: "unterminated string meets end of file\n(Using Ruby 2.1 parser; configure using `TargetRubyVersion` parameter, under `AllCops`)",
-            type: "error",
-          ),
-        ]
+        actual.first == Error.new(line_num: 0, message: "Lint/Syntax: unterminated string meets end of file\n(Using Ruby 2.1 parser; configure using `TargetRubyVersion` parameter, under `AllCops`)", type: "error")
       end
     end
 
@@ -24,7 +18,7 @@ module LanguageServer::Linter
       source = "a = 'a'"
       actual = Rubocop.new(source, @config_path).call
       assert do
-        actual.first == Error.new(line_num: 0, message: "Useless assignment to variable - `a`.", type: "warning")
+        actual.first == Error.new(line_num: 0, message: "Lint/UselessAssignment: Useless assignment to variable - `a`.", type: "warning")
       end
     end
 
@@ -32,7 +26,7 @@ module LanguageServer::Linter
       source = 'require "foo"'
       actual = Rubocop.new(source, @config_path).call
       assert do
-        actual.first == Error.new(line_num: 0, message: "Prefer single-quoted strings when you don't need string interpolation or special symbols.", type: "warning")
+        actual.first == Error.new(line_num: 0, message: "Style/StringLiterals: Prefer single-quoted strings when you don't need string interpolation or special symbols.", type: "warning")
       end
     end
   end

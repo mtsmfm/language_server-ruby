@@ -3,6 +3,7 @@
 ## Not released
 
 - Remove rcodetools integration (for now)
+- Bump language_server-protocol
 
 ## 0.10.0
 

@@ -5,7 +5,7 @@ module LanguageServer
         def attributes(*attrs)
           attr_accessor(*attrs)
           attribute_names.concat(attrs)
-          class_eval <<-RUBY, __FILE__, __LINE__
+          class_eval <<-RUBY, __FILE__, __LINE__ + 1
 def initialize(#{attribute_names.map { |n| "#{n}:" }.join(",")})
   #{attribute_names.map { |n|
       "@#{n} = #{n}"

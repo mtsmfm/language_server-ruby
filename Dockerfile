@@ -1,4 +1,4 @@
-FROM ruby:2.4.2-alpine
+FROM ruby:2.5.1-alpine
 
 RUN apk add --no-cache git
 

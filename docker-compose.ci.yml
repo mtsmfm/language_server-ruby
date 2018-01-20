@@ -3,6 +3,8 @@ services:
   app: &app
     volumes:
       - project:/app
+  ruby-2-5:
+    <<: *app
   ruby-2-4:
     <<: *app
   ruby-2-3:

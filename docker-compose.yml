@@ -5,26 +5,32 @@ services:
       context: .
       dockerfile: Dockerfile.development
       args:
-        RUBY_VERSION: 2.4.2
+        RUBY_VERSION: 2.5.0
     environment:
       LANGUAGE_SERVER_RUBY_REMOTE_ROOT: $PWD
     volumes:
       - vendor:/vendor
       - home:/home/ruby
+  ruby-2-5:
+    <<: *app
   ruby-2-4:
     <<: *app
+    build:
+      <<: *app-build
+      args:
+        RUBY_VERSION: 2.4.3
   ruby-2-3:
     <<: *app
     build:
       <<: *app-build
       args:
-        RUBY_VERSION: 2.3.4
+        RUBY_VERSION: 2.3.6
   ruby-2-2:
     <<: *app
     build:
       <<: *app-build
       args:
-        RUBY_VERSION: 2.2.7
+        RUBY_VERSION: 2.2.9
 volumes:
   home:
   vendor:

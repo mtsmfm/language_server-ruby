@@ -8,8 +8,19 @@ module LanguageServer::Linter
         if a == "\\n"
       EOS
 
+      # <compiled>:2: syntax error, unexpected $undefined, expecting end-of-input
+      # if a == "\n"
+      #           ^
+
+      characters =
+        if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("2.5.0")
+          9..10
+        else
+          10..11
+        end
+
       assert {
-        linter.call == [Error.new(line_num: 1, characters: 10..11, message: "unexpected $undefined, expecting end-of-input", type: "syntax error")]
+        linter.call == [Error.new(line_num: 1, characters: characters, message: "unexpected $undefined, expecting end-of-input", type: "syntax error")]
       }
     end
 

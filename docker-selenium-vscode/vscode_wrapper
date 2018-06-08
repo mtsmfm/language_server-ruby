@@ -1,0 +1,33 @@
+#! /usr/bin/env bash
+
+set -e
+tmpdir="/tmp/vscode-test-$(date +'%s')"
+mkdir $tmpdir
+cd $tmpdir
+mkdir .vscode
+
+args=()
+
+for opt in "$@"
+do
+    case $opt in
+        --before-boot=* )
+            before_boot=$(echo "$1" | sed -e "s/^--before-boot='//" -e "s/'$//")
+            echo $before_boot
+            ;;
+        'data:,' )
+            # Ignore
+            ;;
+        * )
+            args+=( $1 )
+            ;;
+    esac
+    shift
+done
+
+if [ "$before_boot" ]; then
+    eval "$before_boot"
+fi
+
+/usr/bin/code --skip-getting-started --disable-updates --disable-crash-reporter --wait ${args[*]} .
+rm -rf $tmpdir

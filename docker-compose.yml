@@ -11,6 +11,8 @@ services:
     volumes:
       - vendor:/vendor
       - home:/home/ruby
+    depends_on:
+      - selenium-vscode
   ruby-2-5:
     <<: *app
   ruby-2-4:
@@ -31,6 +33,11 @@ services:
       <<: *app-build
       args:
         RUBY_VERSION: 2.2.9
+  selenium-vscode:
+    build:
+      context: docker-selenium-vscode
+    ports:
+      - 5900
 volumes:
   home:
   vendor:

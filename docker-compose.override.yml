@@ -14,3 +14,6 @@ services:
     <<: *app
   ruby-2-2:
     <<: *app
+  selenium-vscode:
+    volumes:
+      - ./docker-selenium-vscode/vscode_wrapper:/opt/vscode_wrapper

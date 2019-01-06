@@ -1,8 +1,6 @@
 {
-    "ruby-lsc.commandWithArgs": [
-        "docker-compose", "run", "--rm", "app"
-    ],
-    "files.exclude": {
-        "vendor": true
-    }
+  "ruby-lsc.commandWithArgs": ["docker-compose", "run", "--rm", "ruby-2-6"],
+  "files.exclude": {
+    "vendor": true
+  }
 }

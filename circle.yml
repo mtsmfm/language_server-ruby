@@ -1,15 +1,13 @@
 version: 2
 jobs:
-  test-2-5: &test
+  ruby-2-6: &test
     docker:
       - image: tmaier/docker-compose
         environment:
           COMPOSE_FILE: docker-compose.yml:docker-compose.ci.yml
-          SERVICE_NAME: ruby-2-5
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 17.05.0-ce
+      - setup_remote_docker
       - run:
           name: setup
           command: |
@@ -19,29 +17,16 @@ jobs:
             docker create -v project:/app --name project busybox chown -R 1000:1000 /app
             docker cp . project:/app
             docker start project
-            docker-compose build $SERVICE_NAME
-      - run: docker-compose run $SERVICE_NAME bin/ci
-  test-2-4:
+            docker-compose build $CIRCLE_JOB
+      - run: docker-compose run $CIRCLE_JOB bin/ci
+  ruby-2-5:
     <<: *test
-    docker:
-      - image: tmaier/docker-compose
-        environment:
-          COMPOSE_FILE: docker-compose.yml:docker-compose.ci.yml
-          SERVICE_NAME: ruby-2-4
-  test-2-3:
+  ruby-2-4:
     <<: *test
-    docker:
-      - image: tmaier/docker-compose
-        environment:
-          COMPOSE_FILE: docker-compose.yml:docker-compose.ci.yml
-          SERVICE_NAME: ruby-2-3
-  test-2-2:
+  ruby-2-3:
     <<: *test
-    docker:
-      - image: tmaier/docker-compose
-        environment:
-          COMPOSE_FILE: docker-compose.yml:docker-compose.ci.yml
-          SERVICE_NAME: ruby-2-2
+  ruby-2-2:
+    <<: *test
   test-docker-build:
     docker:
       - image: docker
@@ -54,8 +39,9 @@ workflows:
   version: 2
   test:
     jobs:
-      - test-2-5
-      - test-2-4
-      - test-2-3
-      - test-2-2
+      - ruby-2-6
+      - ruby-2-5
+      - ruby-2-4
+      - ruby-2-3
+      - ruby-2-2
       - test-docker-build

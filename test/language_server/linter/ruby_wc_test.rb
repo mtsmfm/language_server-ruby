@@ -19,8 +19,15 @@ module LanguageServer::Linter
           10..11
         end
 
+      message =
+        if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("2.6.0")
+          "unexpected backslash, expecting end-of-input"
+        else
+          "unexpected $undefined, expecting end-of-input"
+        end
+
       assert {
-        linter.call == [Error.new(line_num: 1, characters: characters, message: "unexpected $undefined, expecting end-of-input", type: "syntax error")]
+        linter.call == [Error.new(line_num: 1, characters: characters, message: message, type: "syntax error")]
       }
     end
 

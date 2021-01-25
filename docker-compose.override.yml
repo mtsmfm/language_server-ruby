@@ -1,16 +1,14 @@
 version: "3.0"
 services:
-  ruby-2-6: &latest
+  ruby-3-0: &latest
     volumes:
       - .:/app:cached
       - $HOME/.gitconfig:/home/ruby/.gitconfig:ro
       - $HOME/.ssh:/home/ruby/.ssh:ro
       - $HOME/.gem:/home/ruby/.gem
+  ruby-2-6:
+    <<: *latest
+  ruby-2-7:
+    <<: *latest
   ruby-2-5:
-    <<: *latest
-  ruby-2-4:
-    <<: *latest
-  ruby-2-3:
-    <<: *latest
-  ruby-2-2:
     <<: *latest

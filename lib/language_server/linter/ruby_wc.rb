@@ -1,4 +1,4 @@
-require "stringio"
+require "open3"
 
 module LanguageServer
   module Linter
@@ -34,47 +34,9 @@ module LanguageServer
 
       private
 
-        # Since Ruby 2.4, syntax error information is outputted to Exception#message instead of stderr
-        if begin; stderr = $stderr; $stderr = StringIO.new; RubyVM::InstructionSequence.compile("="); rescue SyntaxError => e; e.message != "compile error"; ensure; $stderr = stderr; end
-          def error_message
-            with_verbose do
-              begin
-                capture_stderr { RubyVM::InstructionSequence.compile(@source) }
-              rescue SyntaxError => e
-                e.message
-              end
-            end
-          end
-        else
-          def error_message
-            with_verbose do
-              capture_stderr do
-                begin
-                  RubyVM::InstructionSequence.compile(@source)
-                rescue SyntaxError
-                end
-              end
-            end
-          end
-        end
-
-        def with_verbose
-          origin = $VERBOSE
-          $VERBOSE = true
-          yield
-        ensure
-          $VERBOSE = origin
-        end
-
-        def capture_stderr
-          origin = $stderr
-          $stderr = StringIO.new
-
-          yield
-
-          $stderr.string
-        ensure
-          $stderr = origin
+        def error_message
+          _, err, = Open3.capture3("ruby -wc", stdin_data: @source)
+          err
         end
 
         def get_characters_from_error_message(error_message, line_index)

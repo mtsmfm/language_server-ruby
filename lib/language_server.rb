@@ -45,7 +45,7 @@ module LanguageServer
         if subscriber
           keys = subscriber.parameters.map(&:last)
           result = subscriber.call(
-            {
+            **{
               request: request, notifier: writer.method(:notify), variables: variables
             }.merge(variables).select { |k, _| keys.include?(k) },
           )

@@ -25,12 +25,6 @@ jobs:
     <<: *test
   ruby-2-5:
     <<: *test
-  ruby-2-4:
-    <<: *test
-  ruby-2-3:
-    <<: *test
-  ruby-2-2:
-    <<: *test
   test-docker-build:
     docker:
       - image: docker
@@ -47,7 +41,4 @@ workflows:
       - ruby-2-7
       - ruby-2-6
       - ruby-2-5
-      - ruby-2-4
-      - ruby-2-3
-      - ruby-2-2
       - test-docker-build

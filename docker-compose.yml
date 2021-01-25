@@ -29,24 +29,6 @@ services:
       <<: *build
       args:
         RUBY_VERSION: 2.5.8
-  ruby-2-4:
-    <<: *latest
-    build:
-      <<: *build
-      args:
-        RUBY_VERSION: 2.4.10
-  ruby-2-3:
-    <<: *latest
-    build:
-      <<: *build
-      args:
-        RUBY_VERSION: 2.3.8
-  ruby-2-2:
-    <<: *latest
-    build:
-      <<: *build
-      args:
-        RUBY_VERSION: 2.2.10
 volumes:
   home:
   vendor:

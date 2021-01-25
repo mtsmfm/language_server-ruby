@@ -103,7 +103,7 @@ module LanguageServer
         end
 
         def build_node(klass, **args)
-          klass.new({ lineno: lineno, character: character, path: path }.merge(args))
+          klass.new(**{ lineno: lineno, character: character, path: path }.merge(args))
         end
     end
   end

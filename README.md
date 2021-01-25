@@ -61,14 +61,12 @@ https://docs.docker.com/engine/installation
 You can run test via m:
 
     $ docker-compose run app bin/m
-    $ docker-compose run ruby-2-3 bin/m
-    $ docker-compose run ruby-2-2 bin/m
+    $ docker-compose run ruby-3-0 bin/m
 
 Or run via guard:
 
     $ docker-compose run app bin/guard
-    $ docker-compose run ruby-2-3 bin/guard
-    $ docker-compose run ruby-2-2 bin/guard
+    $ docker-compose run ruby-3-0 bin/m
 
 ## Contributing
 
@@ -78,4 +76,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/mtsmfm
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-

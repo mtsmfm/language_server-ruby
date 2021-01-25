@@ -38,21 +38,17 @@ module LanguageServer
         if begin; stderr = $stderr; $stderr = StringIO.new; RubyVM::InstructionSequence.compile("="); rescue SyntaxError => e; e.message != "compile error"; ensure; $stderr = stderr; end
           def error_message
             with_verbose do
-              begin
-                capture_stderr { RubyVM::InstructionSequence.compile(@source) }
-              rescue SyntaxError => e
-                e.message
-              end
+              capture_stderr { RubyVM::InstructionSequence.compile(@source) }
+            rescue SyntaxError => e
+              e.message
             end
           end
         else
           def error_message
             with_verbose do
               capture_stderr do
-                begin
-                  RubyVM::InstructionSequence.compile(@source)
-                rescue SyntaxError
-                end
+                RubyVM::InstructionSequence.compile(@source)
+              rescue SyntaxError
               end
             end
           end

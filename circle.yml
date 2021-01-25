@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  ruby-2-6: &test
+  ruby-3-0: &test
     docker:
       - image: tmaier/docker-compose
         environment:
@@ -19,6 +19,10 @@ jobs:
             docker start project
             docker-compose build $CIRCLE_JOB
       - run: docker-compose run $CIRCLE_JOB bin/ci
+  ruby-2-7:
+    <<: *test
+  ruby-2-6:
+    <<: *test
   ruby-2-5:
     <<: *test
   ruby-2-4:
@@ -39,6 +43,8 @@ workflows:
   version: 2
   test:
     jobs:
+      - ruby-3-0
+      - ruby-2-7
       - ruby-2-6
       - ruby-2-5
       - ruby-2-4

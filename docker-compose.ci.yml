@@ -1,8 +1,12 @@
 version: "3.0"
 services:
-  ruby-2-6: &latest
+  ruby-3-0: &latest
     volumes:
       - project:/app
+  ruby-2-7:
+    <<: *latest
+  ruby-2-6:
+    <<: *latest
   ruby-2-5:
     <<: *latest
   ruby-2-4:

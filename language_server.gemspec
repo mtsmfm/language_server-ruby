@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 2.5.0"
 
-  spec.add_dependency "language_server-protocol", "3.7.0.0"
+  spec.add_dependency "language_server-protocol", "3.15.0.2"
 
   spec.add_development_dependency "awesome_print"
   spec.add_development_dependency "benchmark-ips"
